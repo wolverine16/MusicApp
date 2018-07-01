@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'tunesApp.apps.TunesappConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': '', 
+        'PASSWORD': 'd@tabasesRcool!3', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
