@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': 'd@tabasesRcool!3', 
+        'PASSWORD': '', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
