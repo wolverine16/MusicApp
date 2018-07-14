@@ -2,7 +2,7 @@
 App using million song dataset
 test commit
 
-# Steps for make MySQL work with Django
+# Steps to make MySQL work with Django
 
 1. Install MySQL version 5.7
 2. You might need to add the location of the mysql.exe to the Path variable. It will be something like C:\Program Files\MySQL\MySQL Server 5.7\bin.
