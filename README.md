@@ -9,11 +9,8 @@ test commit
 3. Open a MySQL session (run mysql -u <user> -p at the cmd prompt)
 4. Open a connection to the database and create a database named mytunesdb. This is the name of the database in the settings.py file
 5. Get the right *.whl from https://www.lfd.uci.edu/~gohlke/pythonlibs/#mysqlclient
-6. Assuming pip is installed run (you can do this using windows powershell)
-	pip install <name of the *.whl from step2> 
-7. Install mysqlclient
-	pip install mysqlclient
-8. Got to the myTunes directory with the manage.py file and run the command.
-	python manage.py dbshell
+6. Assuming pip is installed run (you can do this using windows powershell): pip install <name of the *.whl from step2> 
+7. Install mysqlclient: pip install mysqlclient
+8. Got to the myTunes directory with the manage.py file and run the command: python manage.py dbshell
 	
 If you get to the mysql prompt you are set.
