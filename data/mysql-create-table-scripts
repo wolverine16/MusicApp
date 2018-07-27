@@ -1,0 +1,43 @@
+CREATE TABLE tunesapp_song (
+  song_id varchar(30) NOT NULL,
+  title varchar(150) NOT NULL,
+  key int(11) NOT NULL,
+  time_signature int(11) NOT NULL,
+  duration double NOT NULL,
+  energy double NOT NULL,
+  tempo double NOT NULL,
+  loudness double NOT NULL,
+  year int(11) NOT NULL,
+  danceability double NOT NULL,
+  writer varchar(150) DEFAULT NULL,
+  artist_hotness float DEFAULT NULL,
+  PRIMARY KEY (`song_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE tunesapp_artist (
+  artist_id varchar(30) NOT NULL,
+  name varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`artist_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `tunesapp_album` (
+  `album_id` int(11) NOT NULL,
+  `name` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`album_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE tunesapp_appears_in (
+  song_id varchar(30) NOT NULL,
+  album_id int(11) NOT NULL,
+  PRIMARY KEY (`song_id`,`album_id`),
+  FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
+  FOREIGN KEY (`album_id`) REFERENCES `tunesapp_album` (`album_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `tunesapp_plays` (
+ `song_id` varchar(30) NOT NULL,
+ `artist_id` varchar(30) NOT NULL,
+ PRIMARY KEY (`song_id`,`artist_id`),
+ FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
+ FOREIGN KEY (`artist_id`) REFERENCES `tunesapp_artist` (`artist_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
