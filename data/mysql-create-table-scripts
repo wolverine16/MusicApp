@@ -26,6 +26,12 @@ CREATE TABLE `tunesapp_album` (
   PRIMARY KEY (`album_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
+CREATE TABLE `tunesapp_genre` (
+  `genre_id` int(11) NOT NULL,
+  `label` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`genre_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
 CREATE TABLE tunesapp_appears_in (
   song_id varchar(30) NOT NULL,
   album_id int(11) NOT NULL,
@@ -40,4 +46,12 @@ CREATE TABLE `tunesapp_plays` (
  PRIMARY KEY (`song_id`,`artist_id`),
  FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
  FOREIGN KEY (`artist_id`) REFERENCES `tunesapp_artist` (`artist_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `tunesapp_belongs_to` (
+  `song_id` varchar(30) NOT NULL,
+  `genre_id` int(11) NOT NULL,
+  PRIMARY KEY (`song_id`,`genre_id`),
+  FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
+  FOREIGN KEY (`genre_id`) REFERENCES `tunesapp_genre` (`genre_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
