@@ -1,7 +1,7 @@
 import os
 
 userfile = os.getcwd() + '\\raw-files\\raw_user_data.txt'
-targetfile = os.getcwd() + '\\raw-files\\users_v1.csv'
+targetfile = os.getcwd() + '\\raw-files\\user_v1.csv'
 namefile = os.getcwd() + '\\raw-files\\name_list.txt'
 
 # Note that this only works for 2500 users or less. Both name_list.txt
@@ -26,10 +26,11 @@ for line in userf:
 		
 		name_from_ary = names[userct - 1]
 		
-		user_id = bytes(user_id, 'utf-8')
+		user_id = bytes(user_id, 'utf-8') # Username is primary key
+		# Using user_id only to match raw_user_data with appropriate song_id
 		fname = name_from_ary.split(' ')[0]
 		lname = name_from_ary.split(' ')[1]
-		username = bytes(fname + lname[:1], 'utf-8')
+		username = bytes(fname + lname[:3], 'utf-8')
 		email = bytes(fname[:2] + lname + '@wisc.edu', 'utf-8')
 		fname = bytes(fname, 'utf-8')
 		lname = bytes(lname, 'utf-8')
@@ -40,6 +41,6 @@ for line in userf:
 		# Hash doesn't actually work--think about creating a real hash
 		# Create_dt in format 'YYYY-MM-DD HH:MM:SS'
 		
-		wrtf.write(user_id + delim + username + delim + email + delim + fname + delim +
+		wrtf.write(username + delim + email + delim + fname + delim +
 				lname + delim + password_hash + delim+ create_date + b'\r\n') 
         

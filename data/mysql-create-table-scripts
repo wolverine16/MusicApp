@@ -1,7 +1,7 @@
 CREATE TABLE tunesapp_song (
   song_id varchar(30) NOT NULL,
-  title varchar(150) NOT NULL,
-  key int(11) NOT NULL,
+  title varchar(200) NOT NULL, -- Changed 150 to 200 since we have a 170-char title
+  song_key int(11) NOT NULL,
   time_signature int(11) NOT NULL,
   duration double NOT NULL,
   energy double NOT NULL,
@@ -9,28 +9,28 @@ CREATE TABLE tunesapp_song (
   loudness double NOT NULL,
   year int(11) NOT NULL,
   danceability double NOT NULL,
-  writer varchar(150) DEFAULT NULL,
+  writer varchar(300) DEFAULT NULL, -- Similar to above; allows many writers for song
   artist_hotness float DEFAULT NULL,
   PRIMARY KEY (`song_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE tunesapp_artist (
   artist_id varchar(30) NOT NULL,
   name varchar(150) DEFAULT NULL,
   PRIMARY KEY (`artist_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tunesapp_album` (
   `album_id` int(11) NOT NULL,
   `name` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`album_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tunesapp_genre` (
   `genre_id` int(11) NOT NULL,
   `label` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`genre_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE tunesapp_appears_in (
   song_id varchar(30) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE tunesapp_appears_in (
   PRIMARY KEY (`song_id`,`album_id`),
   FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
   FOREIGN KEY (`album_id`) REFERENCES `tunesapp_album` (`album_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tunesapp_plays` (
  `song_id` varchar(30) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE `tunesapp_plays` (
  PRIMARY KEY (`song_id`,`artist_id`),
  FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
  FOREIGN KEY (`artist_id`) REFERENCES `tunesapp_artist` (`artist_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tunesapp_belongs_to` (
   `song_id` varchar(30) NOT NULL,
@@ -54,4 +54,14 @@ CREATE TABLE `tunesapp_belongs_to` (
   PRIMARY KEY (`song_id`,`genre_id`),
   FOREIGN KEY (`song_id`) REFERENCES `tunesapp_song` (`song_id`),
   FOREIGN KEY (`genre_id`) REFERENCES `tunesapp_genre` (`genre_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tunesapp_user` (
+  username VARCHAR(50) NOT NULL,
+  email VARCHAR(100),
+  fname VARCHAR(50),
+  lname VARCHAR(50),
+  password_hash VARCHAR(150),
+  create_dt DATETIME,
+  PRIMARY KEY (username),
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
