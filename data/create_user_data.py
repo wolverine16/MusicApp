@@ -14,6 +14,7 @@ delim = b','
 # Get list of names
 namef = open(namefile, 'r')
 names = [line.rstrip('\n') for line in namef]
+namef.close()
 
 userf = open(userfile, 'r')
 wrtf = open(targetfile, 'wb')
@@ -42,5 +43,8 @@ for line in userf:
 		# Create_dt in format 'YYYY-MM-DD HH:MM:SS'
 		
 		wrtf.write(username + delim + email + delim + fname + delim +
-				lname + delim + password_hash + delim+ create_date + b'\r\n') 
+				lname + delim + password_hash + delim + create_date + b'\r\n') 
+				
+userf.close()
+wrtf.close()
         
