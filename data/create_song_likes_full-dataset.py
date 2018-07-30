@@ -1,9 +1,10 @@
 import os
 import random
 
-user_file = os.getcwd() + '\\raw-files\\user_v1.csv'
+user_file = os.getcwd() + '\\raw-files\\raw_user_data.txt'
 song_file = os.getcwd() + '\\raw-files\\song_v1.csv'
 target_file = os.getcwd() + '\\raw-files\\song_likes_v1.csv'
+raw_namefile = os.getcwd() + '\\raw-files\\name_list.txt'
 
 
 def get_line(file, position):
@@ -33,8 +34,6 @@ def get_random_lines(file, num_of_lines):
             position = random.randint(0, last_char)
             lines.append(get_line(file, position))
         
-        # Some lines fail the decoding, but there isn't enough time to
-        # troubleshoot, so I'm using this as a workaround...
         except UnicodeDecodeError:
             return " "
             
@@ -50,21 +49,37 @@ def main(userfile, songfile, targetfile):
     slf = open(targetfile, 'wb')
     
     delim = ','
+    user_ary = []
     userct = 0
     
+    # Get list of names
+    raw_namef = open(raw_namefile, 'r')
+    names = [line.rstrip('\n') for line in raw_namef]
+    raw_namef.close()
+
     for line in userf:
-        username = str(line).split(',')[0]
-       
-        song_lines = " "
-        while song_lines == " ":
-            song_lines = get_random_lines(songf, 5)
+        user_id, song_id, play_count = line.strip().split('\t')
         
-        for i in range(len(song_lines)):
-            song_id = song_lines[i].split(',')[0]
-            song_count = str(random.randint(0, 100))
-            slf.write(bytes(song_id + delim + username + delim + song_count +
-                delim + str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
-            # For the rating, we pick random float b/w 3 and 5
+        if user_id not in user_ary:
+            user_ary.append(user_id)
+            userct += 1 # Only works if lines with same user_id are grouped together
+            
+        name_from_ary = names[userct - 1]
+            
+        fname = name_from_ary.split(' ')[0]
+        lname = name_from_ary.split(' ')[1]
+        username = fname + lname[:3]
+
+        
+        
+        #song_lines = " "
+        #while song_lines == " ":
+            #song_lines = get_random_lines(songf, 1)
+        #song_id = song_lines[0].split(',')[0]
+        
+        slf.write(bytes(song_id + delim + username + delim + play_count +
+            delim + str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
+        # For the rating, we pick random float b/w 3 and 5
 
 
     userf.close()

@@ -2,8 +2,8 @@ import os
 import random
 
 user_file = os.getcwd() + '\\raw-files\\user_v1.csv'
-song_file = os.getcwd() + '\\raw-files\\song_v1.csv'
-target_file = os.getcwd() + '\\raw-files\\song_likes_v1.csv'
+genre_file = os.getcwd() + '\\raw-files\\genre_v1.csv'
+target_file = os.getcwd() + '\\raw-files\\genre_likes_v1.csv'
 
 
 def get_line(file, position):
@@ -44,10 +44,10 @@ def get_random_lines(file, num_of_lines):
     return lines
 
 
-def main(userfile, songfile, targetfile):
+def main(userfile, genrefile, targetfile):
     userf = open(userfile, 'r')
-    songf = open(songfile, 'r')
-    slf = open(targetfile, 'wb')
+    genref = open(genrefile, 'r')
+    glf = open(targetfile, 'wb')
     
     delim = ','
     userct = 0
@@ -55,21 +55,20 @@ def main(userfile, songfile, targetfile):
     for line in userf:
         username = str(line).split(',')[0]
        
-        song_lines = " "
-        while song_lines == " ":
-            song_lines = get_random_lines(songf, 5)
+        genre_lines = " "
+        while genre_lines == " ":
+            genre_lines = get_random_lines(genref, 3)
         
-        for i in range(len(song_lines)):
-            song_id = song_lines[i].split(',')[0]
-            song_count = str(random.randint(0, 100))
-            slf.write(bytes(song_id + delim + username + delim + song_count +
-                delim + str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
+        for i in range(len(genre_lines)):
+            genre_id = genre_lines[i].split(',')[0]
+            glf.write(bytes(genre_id + delim + username + delim +
+                str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
             # For the rating, we pick random float b/w 3 and 5
 
 
     userf.close()
-    songf.close()
-    slf.close()
+    genref.close()
+    glf.close()
     
 if __name__ == '__main__':
-    main(user_file, song_file, target_file)
+    main(user_file, genre_file, target_file)

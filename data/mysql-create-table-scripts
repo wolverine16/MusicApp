@@ -65,3 +65,31 @@ CREATE TABLE `tunesapp_user` (
   create_dt DATETIME,
   PRIMARY KEY (username),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE tunesapp_song_likes (
+  song_id varchar(30),
+  username VARCHAR(50),
+  count int(11),
+  rating double,
+  PRIMARY KEY (song_id, username),
+  FOREIGN KEY (song_id) REFERENCES tunesapp_song (song_id),
+  FOREIGN KEY (username) REFERENCES tunesapp_user (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE tunesapp_genre_likes (
+  genre_id int(11),
+  username VARCHAR(50),
+  rating double,
+  PRIMARY KEY (genre_id, username),
+  FOREIGN KEY (genre_id) REFERENCES tunesapp_genre (genre_id),
+  FOREIGN KEY (username) REFERENCES tunesapp_user (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE tunesapp_artist_likes (
+  artist_id varchar(30),
+  username VARCHAR(50),
+  rating double,
+  PRIMARY KEY (artist_id, username),
+  FOREIGN KEY (artist_id) REFERENCES tunesapp_artist (artist_id),
+  FOREIGN KEY (username) REFERENCES tunesapp_user (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
