@@ -46,3 +46,11 @@ class Search(models.Model):
     artist = models.CharField(max_length=150)
     search_attr = models.CharField(max_length=750)
 
+class Artist(models.Model):
+    artist_id = models.IntegerField(primary_key = True)
+    artist_name = models.CharField(max_length = 150)
+    artist_hottness = models.FloatField()
+
+
+
+
