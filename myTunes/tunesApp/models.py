@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -18,6 +19,8 @@ class Song(models.Model):
     danceability = models.FloatField()
     writer = models.CharField('writer', max_length = 150)
     song_genres = models.ManyToManyField(Genre)
+    song_albums = models.ManyToManyField(Album)
+    song_artists = models.ManyToManyField(Artist)
     
     
 class Genre(models.Model):
@@ -28,9 +31,6 @@ class Album(models.Model):
     album_id = models.IntegerField(primary_key = True)
     album_name = models.CharField(max_length = 150)
 
-class User(models.Model):
-    pass
-
 class Search(models.Model):
     # TODO: user_id should be AutoField on User model
     # Note: A database index is automatically created on the ForeignKey. You can disable this by setting db_index to False.
@@ -38,13 +38,15 @@ class Search(models.Model):
     # user = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True, unique=True)
     # search_inst will automatically be created with current time/date
     # Note: This should be set to unique=True, but we can't do that without having a composite key. See note below
-    # search_inst = models.DateTimeField(default=timezone.now)
     # TODO: Django does not appear to support composite keys... need to think of a workaround
+    search_id = models.AutoField(primary_key = True) #auto-incremented id, so composite keys not needed
+    user_id = models.ForeignKey(User)
     album = models.CharField(max_length=150)
     genre = models.CharField(max_length=150)
     song = models.CharField(max_length=150)
     artist = models.CharField(max_length=150)
     search_attr = models.CharField(max_length=750)
+    search_inst = models.DateTimeField(default=timezone.now)
 
 class Artist(models.Model):
     artist_id = models.IntegerField(primary_key = True)
@@ -52,5 +54,23 @@ class Artist(models.Model):
     artist_hottness = models.FloatField()
 
 
+class Song_Likes(models.Model):
+    like_id = models.AutoField(primary_key = True)
+    song_id = models.ManyToManyField(Song)
+    user_id = models.ManyToManyField(User)
+    count = models.IntegerField()
+    rating = models.IntegerField() 
+
+class Genre_Likes(models.Model):
+    like_id = models.AutoField(primary_key = True)
+    genre_id = models.ManyToManyField(Genre)
+    user_id = models.ManyToManyField(User)
+    rating = models.IntegerField() 
+
+class Artist_Likes(models.Model):
+    like_id = models.AutoField(primary_key = True)
+    artist_id = models.ManyToManyField(Artist)
+    user_id = models.ManyToManyField(User)
+    rating = models.IntegerField()
 
 
