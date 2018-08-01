@@ -1,6 +1,7 @@
 # Python temp
 __pycache__/
 *.py[cod]
+migrations/
 
 # Editors
 *~

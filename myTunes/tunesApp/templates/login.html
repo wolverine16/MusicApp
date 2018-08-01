@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block main_container %}
+
+<form method="post">
+  {% csrf_token %}
+
+  {% if form.errors %}
+  <p>Please re-enter your credentials!</p>
+  {% endif %}
+
+  <p>Username: {{ form.username }}</p>
+  <p>Password: {{ form.password }}</p>
+
+  <p><input type="submit" value="login" /><p>
+</form>
+
+{% endblock %}
