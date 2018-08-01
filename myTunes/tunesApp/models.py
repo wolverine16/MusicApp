@@ -6,6 +6,22 @@ from django.contrib.auth.models import User
 
 # TODO(Luis): I arbitrarily picked 150 as the max_length for text field--we should consider if we need a different value. Also, maybe we should make it a global variable instead?
 
+class Genre(models.Model):
+    label = models.CharField('label', max_length = 20)
+    genre_id = models.IntegerField(primary_key = True)
+    
+    
+class Artist(models.Model):
+    artist_id = models.IntegerField(primary_key = True)
+    artist_name = models.CharField(max_length = 150)
+    artist_hottness = models.FloatField()
+    
+    
+class Album(models.Model):
+    album_id = models.IntegerField(primary_key = True)
+    album_name = models.CharField(max_length = 150)
+    
+
 class Song(models.Model):
     song_id = models.CharField('song_id', max_length = 30, primary_key = True)
     title = models.CharField('title', max_length = 150)
@@ -22,14 +38,6 @@ class Song(models.Model):
     song_albums = models.ManyToManyField(Album)
     song_artists = models.ManyToManyField(Artist)
     
-    
-class Genre(models.Model):
-    label = models.CharField('label', max_length = 20)
-    genre_id = models.IntegerField(primary_key = True)
-    
-class Album(models.Model):
-    album_id = models.IntegerField(primary_key = True)
-    album_name = models.CharField(max_length = 150)
 
 class Search(models.Model):
     # TODO: user_id should be AutoField on User model
@@ -40,18 +48,13 @@ class Search(models.Model):
     # Note: This should be set to unique=True, but we can't do that without having a composite key. See note below
     # TODO: Django does not appear to support composite keys... need to think of a workaround
     search_id = models.AutoField(primary_key = True) #auto-incremented id, so composite keys not needed
-    user_id = models.ForeignKey(User)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     album = models.CharField(max_length=150)
     genre = models.CharField(max_length=150)
     song = models.CharField(max_length=150)
     artist = models.CharField(max_length=150)
     search_attr = models.CharField(max_length=750)
     search_inst = models.DateTimeField(default=timezone.now)
-
-class Artist(models.Model):
-    artist_id = models.IntegerField(primary_key = True)
-    artist_name = models.CharField(max_length = 150)
-    artist_hottness = models.FloatField()
 
 
 class Song_Likes(models.Model):
