@@ -12,9 +12,8 @@ class Genre(models.Model):
     
     
 class Artist(models.Model):
-    artist_id = models.IntegerField(primary_key = True)
+    artist_id = models.CharField('artist_id', max_length = 30, primary_key = True)
     artist_name = models.CharField(max_length = 150)
-    artist_hottness = models.FloatField()
     
     
 class Album(models.Model):
@@ -34,6 +33,7 @@ class Song(models.Model):
     year = models.IntegerField()
     danceability = models.FloatField()
     writer = models.CharField('writer', max_length = 150)
+    artist_hottness = models.FloatField()
     song_genres = models.ManyToManyField(Genre)
     song_albums = models.ManyToManyField(Album)
     song_artists = models.ManyToManyField(Artist)
