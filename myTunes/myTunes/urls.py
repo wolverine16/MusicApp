@@ -18,11 +18,14 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from tunesApp import views
 
 # urlpatterns = patterns('',)
 
 urlpatterns = [
-    path('accounts/login/', auth_views.my_login),
+    #path('accounts/login/', auth_views.my_login),
+    # Home page
+    path('', views.home),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
 ]
