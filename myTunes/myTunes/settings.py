@@ -38,14 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< Updated upstream
-    'django.contrib.sites'
-=======
     'django.contrib.sites',
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+    #'userena',
+    #'guardian',
+    #'easy_thumbnails',
+    #'accounts',
+    #'users',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +61,7 @@ ROOT_URLCONF = 'myTunes.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': 'Nrdealsteal1', 
+        'PASSWORD': 'Admin:123', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
@@ -138,6 +136,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+LOGIN_REDIRECT_URL = '/'
+
 ANONYMOUS_USER_ID = -1
 
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
@@ -147,3 +147,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 #USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 #LOGIN_URL = '/accounts/signin/'
 #LOGOUT_URL = '/accounts/signout/'
+
+
+# I did this in the Python shell:
+# from django.contrib.sites.models import Site
+# new_site = Site.objects.create(domain='mytunes.com', name='mytunes.com') 
+# print(new_site.id)
+
+SITE_ID = 2

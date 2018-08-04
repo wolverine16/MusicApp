@@ -7,7 +7,7 @@ import decimal
 
 def home(request):
 	"""The home page for the myTunes app."""
-	return render (request, 'base.html')
+	return render (request, 'home.html')
 	
 def favorites(request):
 	"""Favorites landing page."""
@@ -56,3 +56,7 @@ def favArtists(request):
 def favGenres(request):
 	"""Favorite genres for the user."""
 	return render(request, 'favorite_genres.html')
+	
+def test(request):
+	"""Test page."""
+	return render(request, 'test.html')

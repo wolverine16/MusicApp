@@ -21,3 +21,18 @@ Before starting to work on the app, please log into the virtual environment:
 8. Got to the myTunes directory with the manage.py file and run the command: python manage.py dbshell
 	
 If you get to the mysql prompt you are set.
+
+
+# In order to use the login functionality, you have to create a site.
+# Type the lines below in the python shell:
+
+- from django.contrib.sites.models import Site
+- new_site = Site.objects.create(domain='mytunes.com', name='mytunes.com') 
+- print(new_site.id)
+
+- You will have to update the settings.py file if your site doesn't have ID of 2
+
+
+# Superuser
+Admin
+PW: dbadmin123
