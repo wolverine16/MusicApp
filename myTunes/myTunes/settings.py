@@ -38,6 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< Updated upstream
+    'django.contrib.sites'
+=======
+    'django.contrib.sites',
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
@@ -79,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': 'd@tabasesRcool!3', 
+        'PASSWORD': 'Nrdealsteal1', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
@@ -123,3 +131,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTHENTICATION_BACKENDS = (
+    #'userena.backends.UserenaAuthenticationBackend',
+    #'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+ANONYMOUS_USER_ID = -1
+
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
+#AUTH_PROFILE_MODULE = 'accounts.AccountProfile'
+
+#USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+#LOGIN_URL = '/accounts/signin/'
+#LOGOUT_URL = '/accounts/signout/'

@@ -2,6 +2,13 @@
 App using million song dataset
 test commit
 
+# Virtual Environment
+Before starting to work on the app, please log into the virtual environment:
+- Go to MusicApp\myTunes
+- Type myTunes_env\Scripts\activate.bat
+- Commands and navigation should still work as normal. Installed packages will only be installed in the virtual environment.
+- Type deactivate when you want to leave the virtual environment.
+
 # Steps to make MySQL work with Django
 
 1. Install MySQL version 5.7

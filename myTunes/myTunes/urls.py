@@ -26,6 +26,11 @@ urlpatterns = [
     #path('accounts/login/', auth_views.my_login),
     # Home page
     path('', views.home),
+    path('favorites/', views.favorites),
+    path('favorites/songs', views.favSongs),
+    path('favorites/artists', views.favArtists),
+    path('favorites/genres', views.favGenres),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-]
+    #path('accounts/', include('userena.urls')),
+]   
