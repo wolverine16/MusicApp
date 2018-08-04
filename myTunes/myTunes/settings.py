@@ -38,11 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
-    #'userena',
-    #'guardian',
-    #'easy_thumbnails',
-    #'accounts',
+    'django.contrib.sites'
 ]
 
 MIDDLEWARE = [
@@ -84,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': 'Admin:123', 
+        'PASSWORD': 'Nrdealsteal1', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
