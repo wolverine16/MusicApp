@@ -32,5 +32,5 @@ urlpatterns = [
     path('favorites/genres', views.favGenres),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-    path('accounts/', include('userena.urls')),
+    #path('accounts/', include('userena.urls')),
 ]
