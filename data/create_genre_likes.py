@@ -62,7 +62,7 @@ def main(userfile, genrefile, targetfile):
         for i in range(len(genre_lines)):
             genre_id = genre_lines[i].split(',')[0]
             glf.write(bytes(genre_id + delim + username + delim +
-                str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
+                str(random.randint(0, 5)) + '\r\n', 'utf-8'))
             # For the rating, we pick random float b/w 3 and 5
 
 

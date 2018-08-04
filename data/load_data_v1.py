@@ -153,6 +153,20 @@ def load_user_likes_genre(filename='genre_likes_v1.csv'):
 	print("User genre likes loaded!!")
 
 
+def load_user_like_artists(filename='artist_likes_v1.csv'):
+	with open(data_dir + filename,'r',encoding="utf8") as user_likes_artist:
+		for line in user_likes_artist:
+			line = line.rstrip(newline)
+			attr_list = line.split(delim)
+			try:
+				one_artist = Artist.objects.get(pk=attr_list[0])
+				one_user = User.objects.get(username=attr_list[1])
+				one_artist_likes = Artist_Likes(artist_id=one_artist.artist_id,user_id=one_user.user_id,rating=attr_list[2])
+				one_artist_likes.save()
+			except:
+				continue
+	print("User artist likes loaded!!")
+
 def remove_duplicates(input_filename, output_filename):
 	lines_seen = set()
 	out_file = io.open(output_filename,'w+',encoding="utf8")
