@@ -7,12 +7,8 @@ from django.contrib.auth.models import User
 # TODO(Luis): I arbitrarily picked 150 as the max_length for text field--we should consider if we need a different value. Also, maybe we should make it a global variable instead?
 
 class Genre(models.Model):
-<<<<<<< HEAD
-    label = models.CharField('label', max_length = 30)
-=======
     # Attributes of Genre entity
-    label = models.CharField('label', max_length = 20)
->>>>>>> 8cafbb4b23c0cd516f8f4b5e020031d40f370116
+    label = models.CharField('label', max_length = 1000)
     genre_id = models.IntegerField(primary_key = True)
     # Relationships connected to Genre entity
     user_genre_likes = models.ManyToManyField(User, through="Genre_Likes")
@@ -21,13 +17,9 @@ class Genre(models.Model):
 class Artist(models.Model):
     # Attributes of Artist entity
     artist_id = models.CharField('artist_id', max_length = 30, primary_key = True)
-<<<<<<< HEAD
     artist_name = models.CharField(max_length = 1000)
-=======
-    artist_name = models.CharField(max_length = 150)
     # Relationships connected to Artist entity
     user_artist_likes = models.ManyToManyField(User, through='Artist_Likes')
->>>>>>> 8cafbb4b23c0cd516f8f4b5e020031d40f370116
     
     
 class Album(models.Model):
