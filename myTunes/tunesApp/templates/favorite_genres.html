@@ -1,4 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 <p>Hello, favorite genres!</p>
+	{% for trans in masterList %}
+	<tr>
+		<td>
+			{{trans.genre_id}}
+			{{trans.label}}
+			{{trans.rating}}
+		</td>
+	</tr>
+	{% endfor %}
 {% endblock %}
+
+
+keys = ['genre_id', 'label', 'rating']

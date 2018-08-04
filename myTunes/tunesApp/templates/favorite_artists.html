@@ -1,4 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <p>Hello, favorite artists!</p>
+	{% for trans in masterList %}
+	<tr>
+		<td>
+			{{trans.artist_id}}
+			{{trans.artist_name}}
+			{{trans.rating}}
+		</td>
+	</tr>
+	{% endfor %}
 {% endblock %}
+
+['artist_id','artist name','rating']

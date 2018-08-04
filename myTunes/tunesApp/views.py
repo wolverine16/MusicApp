@@ -23,22 +23,32 @@ def favorites(request):
 def favSongs(request):
 	"""Favorite songs for the user."""
 	cursor = connection.cursor()
-	cursor.execute('SELECT * FROM auth_user')
+	#raw sql to be executed:
+	query = '''
+	SELECT s.song_id, s.title, s.key, s.duration, s.energy, 
+	s.tempo, s.danceability, s.time_sig, s.year, s.writer, 
+	s.loudness, sl.count, sl.rating
+	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s
+	WHERE u.username = sl.username and sl.song_id = s.song_id
+	ORDER BY sl.rating DESC;
+	'''
+	cursor.execute(query)
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
-	keys = ['id','password','last_login','is_superuser',
-	'username','first_name','last_name','email','is_staff',
-	'is_active','date_joined']
-	countLst = range(11)
+	keys = ['song_id','title','song_key','duration','energy',
+	'tempo','danceability','time_sig','year','writer',
+	'loudness','count','rating']
+	# corresponding numeric value for each key to be used to populate dictionary
+	countLst = range(len(keys))
 	tempDict = {}
 	masterList = []
 	for tup in transactions:
 		for i in countLst:
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
-	print(masterList)
-	return render(request, 'favorite_songs.html',{"masterList":masterList})
+	# print(masterList)
+	return render(request, 'favorite_songs.html',{'masterList':masterList})
 
 def to_string(x):
 	'''Function for converting data into string form so that it can be rendered properly'''
@@ -58,11 +68,56 @@ def to_string(x):
 
 def favArtists(request):
 	"""Favorite artists for the user."""
-	return render(request, 'favorite_artists.html')
+	"""Favorite songs for the user."""
+	cursor = connection.cursor()
+	#raw sql to be executed:
+	query = '''
+	SELECT a.artist_id, a.name, al.rating
+	FROM User u, Artist_likes al, Artist a
+	WHERE u.username = al.username and al.artist_id = a.artist_id
+	ORDER BY al.rating DESC;
+	'''
+	cursor.execute(query)
+	transactions = [to_string(x) for x in cursor.fetchall()]
+	#print(transactions)
+	#transactions = [{"id":1},{"id":2}]
+	keys = ['artist_id','artist name','rating']
+	# corresponding numeric value for each key to be used to populate dictionary
+	countLst = range(len(keys))
+	tempDict = {}
+	masterList = []
+	for tup in transactions:
+		for i in countLst:
+			tempDict[keys[i]] = tup[i]
+		masterList.append(tempDict)
+	# print(masterList)
+	return render(request, 'favorite_artists.html',{'masterList':masterList})
 	
 def favGenres(request):
-	"""Favorite genres for the user."""
-	return render(request, 'favorite_genres.html')
+	"""Favorite songs for the user."""
+	cursor = connection.cursor()
+	#raw sql to be executed:
+	query = '''
+	SELECT g.genre_id, g.label, gl.rating
+	FROM User u, Genre_likes gl, Genre g
+	WHERE u.username = gl.username and gl.genre_id = g.genre_id
+	ORDER BY gl.rating DESC;
+	'''
+	cursor.execute(query)
+	transactions = [to_string(x) for x in cursor.fetchall()]
+	#print(transactions)
+	#transactions = [{"id":1},{"id":2}]
+	keys = ['genre_id', 'label', 'rating']
+	# corresponding numeric value for each key to be used to populate dictionary
+	countLst = range(len(keys))
+	tempDict = {}
+	masterList = []
+	for tup in transactions:
+		for i in countLst:
+			tempDict[keys[i]] = tup[i]
+		masterList.append(tempDict)
+	# print(masterList)
+	return render(request, 'favorite_genres.html',{'masterList':masterList})
 	
 def test(request):
 	"""Test page."""

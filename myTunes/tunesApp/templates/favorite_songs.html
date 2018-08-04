@@ -4,10 +4,19 @@
 	{% for trans in masterList %}
 	<tr>
 		<td>
-			{{trans.id}}
-		</td>
-		<td>
-			{{trans.username}}
+			{{trans.song_id}}
+			{{trans.title}}
+			{{trans.key}}
+			{{trans.duration}}
+			{{trans.energy}}
+			{{trans.tempo}}
+			{{trans.danceability}}
+			{{trans.time_sig}}
+			{{trans.year}}
+			{{trans.writer}}
+			{{trans.loudness}}
+			{{trans.count}}
+			{{trans.rating}}
 		</td>
 	</tr>
 	{% endfor %}
