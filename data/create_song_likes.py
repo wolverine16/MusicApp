@@ -63,7 +63,7 @@ def main(userfile, songfile, targetfile):
             song_id = song_lines[i].split(',')[0]
             song_count = str(random.randint(0, 100))
             slf.write(bytes(song_id + delim + username + delim + song_count +
-                delim + str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
+                delim + str(random.randint(3, 5)) + '\r\n', 'utf-8'))
             # For the rating, we pick random float b/w 3 and 5
 
 

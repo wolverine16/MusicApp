@@ -62,7 +62,7 @@ def main(userfile, artistfile, targetfile):
         for i in range(len(artist_lines)):
             artist_id = artist_lines[i].split(',')[0]
             alf.write(bytes(artist_id + delim + username + delim +
-                str(random.uniform(3, 5)) + '\r\n', 'utf-8'))
+                str(random.randint(0, 5)) + '\r\n', 'utf-8'))
             # For the rating, we pick random float b/w 3 and 5
 
 
