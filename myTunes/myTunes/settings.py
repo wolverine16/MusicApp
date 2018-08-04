@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sites'
 =======
     'django.contrib.sites',
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 ]
 
@@ -84,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': 'admin', 
+        'PASSWORD': 'Nrdealsteal1', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }
