@@ -7,15 +7,16 @@
     
    {% block content %}
 
-    <main role="main" class="container">
-
       <div class="starter-template">
-        <h1>Welcome to MyTunes!</h1>
+		{% if user.is_authenticated %}
+          <h1>Welcome to MyTunes, {{ user.username }}!</h1>
+        {% else %}
+          <h1>Welcome to MyTunes!</h1>
+          <h3>Please <a href="{% url 'login' %}">sign in</a> to save your favorite songs.</h3>
+        {% endif %}
         <p class="lead">Go to the Search page to search songs in our database
         <br> or click on one of the Favorites pages to manage your list of favorites.</p>
       </div>
-
-    </main><!-- /.container -->
 
   
    {% endblock content %}
