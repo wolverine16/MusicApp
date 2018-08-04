@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
+{% load static %}
+
     {% block custom_style %}
       <!-- Custom styles for this template -->
-      <link href="starter-template.css" rel="stylesheet">
+      <link href="{% static 'tunesApp/home_page.css' %}" rel="stylesheet">
     {% endblock custom_style %}
     
    {% block content %}
