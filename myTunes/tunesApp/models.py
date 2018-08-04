@@ -7,21 +7,29 @@ from django.contrib.auth.models import User
 # TODO(Luis): I arbitrarily picked 150 as the max_length for text field--we should consider if we need a different value. Also, maybe we should make it a global variable instead?
 
 class Genre(models.Model):
+    # Attributes of Genre entity
     label = models.CharField('label', max_length = 20)
     genre_id = models.IntegerField(primary_key = True)
+    # Relationships connected to Genre entity
+    user_genre_likes = models.ManyToManyField(User, through="Genre_Likes")
     
     
 class Artist(models.Model):
+    # Attributes of Artist entity
     artist_id = models.CharField('artist_id', max_length = 30, primary_key = True)
     artist_name = models.CharField(max_length = 150)
+    # Relationships connected to Artist entity
+    user_artist_likes = models.ManyToManyField(User, through='Artist_Likes')
     
     
 class Album(models.Model):
+    #Attributes of Album entity
     album_id = models.IntegerField(primary_key = True)
     album_name = models.CharField(max_length = 150)
     
 
 class Song(models.Model):
+    #Attributes of Song entity
     song_id = models.CharField('song_id', max_length = 30, primary_key = True)
     title = models.CharField('title', max_length = 150)
     key = models.IntegerField()
@@ -34,9 +42,11 @@ class Song(models.Model):
     danceability = models.FloatField()
     writer = models.CharField('writer', max_length = 150)
     artist_hottness = models.FloatField()
+    #Relationships connected to Song entity
     song_genres = models.ManyToManyField(Genre)
     song_albums = models.ManyToManyField(Album)
     song_artists = models.ManyToManyField(Artist)
+    user_song_likes = models.ManyToManyField(User, through='Song_Likes')
     
 
 class Search(models.Model):
@@ -56,24 +66,18 @@ class Search(models.Model):
     search_attr = models.CharField(max_length=750)
     search_inst = models.DateTimeField(default=timezone.now)
 
-
 class Song_Likes(models.Model):
-    like_id = models.AutoField(primary_key = True)
-    song_id = models.ManyToManyField(Song)
-    user_id = models.ManyToManyField(User)
+    song_id = models.ForeignKey(Song, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     count = models.IntegerField()
     rating = models.IntegerField() 
 
 class Genre_Likes(models.Model):
-    like_id = models.AutoField(primary_key = True)
-    genre_id = models.ManyToManyField(Genre)
-    user_id = models.ManyToManyField(User)
+    genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField() 
 
 class Artist_Likes(models.Model):
-    like_id = models.AutoField(primary_key = True)
-    artist_id = models.ManyToManyField(Artist)
-    user_id = models.ManyToManyField(User)
+    artist_id = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
-
-
