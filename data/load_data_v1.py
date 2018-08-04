@@ -20,7 +20,7 @@ newline = '\n'
 delim = ','
 data_dir = os.getcwd() + '\\raw-files\\'
 
-def load_artists(filename='artist_v1.csv'):
+def load_artists(filename='artist_nodup_v1.csv'):
 	with open(data_dir + filename,'r',encoding="utf8") as artist_file:
 		for line in artist_file:
 			line = line.rstrip(newline)
@@ -106,6 +106,22 @@ def load_sg_genres(filename='belongs_to_v1.csv'):
 				continue
 	print("Song and genre file loaded!!")
 
+def load_user(filename='user_v1.csv'):
+	with open(data_dir + filename,'r',encoding="utf8") as user_file:
+		for line in user_file:
+			line = line.rstrip(newline)
+			attr_list = line.split(delim)
+			try:
+				u_name = attr_list[0]
+				u_email = attr_list[1]
+				one_user = User.objects.create_user(u_name, u_email, password='dbadmin123')
+				one_user.first_name = attr_list[2]
+				one_user.last_name = attr_list[3]
+				one_user.save()
+			except:
+				continue
+	print("Users file loaded!!")
+
 
 def load_user_likes_song(filename='song_likes_v1.csv'):
 	with open(data_dir + filename,'r',encoding="utf8") as user_likes_sg:
@@ -114,12 +130,27 @@ def load_user_likes_song(filename='song_likes_v1.csv'):
 			attr_list = line.split(delim)
 			try:
 				sg = Song.objects.get(pk=attr_list[0])
-				one_user = User.objects.get(pk=attr_list[1])
-				sg_likes = Song_Likes(song_id=sg,user_id=one_user,count=attr_list[2],rating=attr_list[3])
+				one_user = User.objects.get(username=attr_list[1])
+				sg_likes = Song_Likes(song_id=sg.song_id,user_id=one_user.user_id,count=attr_list[2],rating=attr_list[3])
 				sg_likes.save()
 			except:
 				continue
 	print("Song likes loaded!!")
+
+
+def load_user_likes_genre(filename='genre_likes_v1.csv'):
+	with open(data_dir + filename,'r',encoding="utf8") as user_likes_genre:
+		for line in user_likes_genre:
+			line = line.rstrip(newline)
+			attr_list = line.split(delim)
+			try:
+				genre = Genre.objects.get(pk=int(attr_list[0]))
+				one_user = User.objects.get(username=attr_list[1])
+				one_genre_likes = Genre_Likes(genre_id=genre.genre_id,user_id=one_user.user_id,rating=attr_list[2])
+				one_genre_likes.save()
+			except:
+				continue
+	print("User genre likes loaded!!")
 
 
 def remove_duplicates(input_filename, output_filename):
