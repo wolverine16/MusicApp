@@ -21,3 +21,7 @@ def favArtists(request):
 def favGenres(request):
 	"""Favorite genres for the user."""
 	return render(request, 'favorite_genres.html')
+	
+def test(request):
+	"""Test page."""
+	return render(request, 'test.html')
