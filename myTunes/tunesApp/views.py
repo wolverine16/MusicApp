@@ -72,9 +72,9 @@ def favArtists(request):
 	cursor = connection.cursor()
 	#raw sql to be executed:
 	query = '''
-	SELECT a.artist_id, a.name, al.rating
-	FROM User u, Artist_likes al, Artist a
-	WHERE u.username = al.username and al.artist_id = a.artist_id
+	SELECT a.artist_id, a.artist_name, al.rating
+	FROM auth_user u, tunesapp_Artist_likes al, tunesapp_Artist a
+	WHERE u.username = al.user_id_id and al.artist_id_id = a.artist_id
 	ORDER BY al.rating DESC;
 	'''
 	cursor.execute(query)
@@ -99,8 +99,8 @@ def favGenres(request):
 	#raw sql to be executed:
 	query = '''
 	SELECT g.genre_id, g.label, gl.rating
-	FROM User u, Genre_likes gl, Genre g
-	WHERE u.username = gl.username and gl.genre_id = g.genre_id
+	FROM auth_user u, tunesapp_Genre_likes gl, tunesapp_Genre g
+	WHERE u.username = gl.user_id_id and gl.genre_id_id = g.genre_id
 	ORDER BY gl.rating DESC;
 	'''
 	cursor.execute(query)
