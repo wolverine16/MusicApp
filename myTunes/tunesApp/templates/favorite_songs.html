@@ -1,4 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <p>Hello, favorite songs!</p>
+	{% for trans in masterList %}
+	<tr>
+		<td>
+			{{trans.id}}
+		</td>
+		<td>
+			{{trans.username}}
+		</td>
+	</tr>
+	{% endfor %}
 {% endblock %}
