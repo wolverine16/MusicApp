@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     #'userena',
     #'guardian',
     #'easy_thumbnails',
-    #'accounts',
-    #'users',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +136,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 ANONYMOUS_USER_ID = -1
 

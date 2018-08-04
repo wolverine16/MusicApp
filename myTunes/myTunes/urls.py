@@ -30,6 +30,7 @@ urlpatterns = [
     path('favorites/songs', views.favSongs),
     path('favorites/artists', views.favArtists),
     path('favorites/genres', views.favGenres),
+    path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
     path('test/', views.test),
