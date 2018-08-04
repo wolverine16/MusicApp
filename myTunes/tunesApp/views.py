@@ -7,7 +7,14 @@ import decimal
 
 def home(request):
 	"""The home page for the myTunes app."""
-	return render (request, 'home.html')
+	return render(request, 'home.html')
+	
+def searchApp(request):
+	"""Initial page for entering search parameters."""
+	# Pass in form fields
+	# Process POST events
+	# Validate entered data
+	return render(request, 'search.html')
 	
 def favorites(request):
 	"""Favorites landing page."""
