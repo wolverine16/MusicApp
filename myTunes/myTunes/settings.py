@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'userena',
-    'guardian',
-    'easy_thumbnails',
-    'accounts',
+    #'userena',
+    #'guardian',
+    #'easy_thumbnails',
+    #'accounts',
 ]
 
 MIDDLEWARE = [
@@ -130,8 +130,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTHENTICATION_BACKENDS = (
-    'userena.backends.UserenaAuthenticationBackend',
-    'guardian.backends.ObjectPermissionBackend',
+    #'userena.backends.UserenaAuthenticationBackend',
+    #'guardian.backends.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -139,4 +139,8 @@ ANONYMOUS_USER_ID = -1
 
 EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
-AUTH_PROFILE_MODULE = 'accounts.AccountProfile'
+#AUTH_PROFILE_MODULE = 'accounts.AccountProfile'
+
+#USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+#LOGIN_URL = '/accounts/signin/'
+#LOGOUT_URL = '/accounts/signout/'
