@@ -1,0 +1,3 @@
+Bugs list:
+
+1. On the Registration under the password field we display html characters with the password rules
