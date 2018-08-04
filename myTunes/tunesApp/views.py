@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 def home(request):
 	"""The home page for the myTunes app."""
-	return render (request, 'base.html')
+	return render (request, 'home.html')
 	
 def favorites(request):
 	"""Favorites landing page."""
