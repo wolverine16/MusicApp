@@ -47,6 +47,7 @@ def favSongs(request):
 		for i in countLst:
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
+		tempDict = {}
 	# print(masterList)
 	return render(request, 'favorite_songs.html',{'masterList':masterList})
 
@@ -90,6 +91,7 @@ def favArtists(request):
 		for i in countLst:
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
+		tempDict = {}
 	# print(masterList)
 	return render(request, 'favorite_artists.html',{'masterList':masterList})
 	
@@ -100,8 +102,8 @@ def favGenres(request):
 	query = '''
 	SELECT g.genre_id, g.label, gl.rating
 	FROM auth_user u, tunesapp_Genre_likes gl, tunesapp_Genre g
-	WHERE u.username = gl.user_id_id and gl.genre_id_id = g.genre_id
-	ORDER BY gl.rating DESC;
+	WHERE u.id = gl.user_id_id and gl.genre_id_id = g.genre_id and gl.user_id_id = 5 
+	ORDER BY gl.rating DESC
 	'''
 	cursor.execute(query)
 	transactions = [to_string(x) for x in cursor.fetchall()]
@@ -116,7 +118,8 @@ def favGenres(request):
 		for i in countLst:
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
-	# print(masterList)
+		tempDict = {}
+	print(masterList)
 	return render(request, 'favorite_genres.html',{'masterList':masterList})
 	
 def test(request):
