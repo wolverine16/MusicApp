@@ -131,7 +131,7 @@ def load_user_likes_song(filename='song_likes_v1.csv'):
 			try:
 				sg = Song.objects.get(pk=attr_list[0])
 				one_user = User.objects.get(username=attr_list[1])
-				sg_likes = Song_Likes(song_id=sg.song_id,user_id=one_user.user_id,count=attr_list[2],rating=attr_list[3])
+				sg_likes = Song_Likes(song_id=sg,user_id=one_user,count=attr_list[2],rating=attr_list[3])
 				sg_likes.save()
 			except:
 				continue
@@ -146,14 +146,14 @@ def load_user_likes_genre(filename='genre_likes_v1.csv'):
 			try:
 				genre = Genre.objects.get(pk=int(attr_list[0]))
 				one_user = User.objects.get(username=attr_list[1])
-				one_genre_likes = Genre_Likes(genre_id=genre.genre_id,user_id=one_user.user_id,rating=attr_list[2])
+				one_genre_likes = Genre_Likes(genre_id=genre,user_id=one_user,rating=attr_list[2])
 				one_genre_likes.save()
 			except:
 				continue
 	print("User genre likes loaded!!")
 
 
-def load_user_like_artists(filename='artist_likes_v1.csv'):
+def load_user_likes_artists(filename='artist_likes_v1.csv'):
 	with open(data_dir + filename,'r',encoding="utf8") as user_likes_artist:
 		for line in user_likes_artist:
 			line = line.rstrip(newline)
@@ -161,7 +161,7 @@ def load_user_like_artists(filename='artist_likes_v1.csv'):
 			try:
 				one_artist = Artist.objects.get(pk=attr_list[0])
 				one_user = User.objects.get(username=attr_list[1])
-				one_artist_likes = Artist_Likes(artist_id=one_artist.artist_id,user_id=one_user.user_id,rating=attr_list[2])
+				one_artist_likes = Artist_Likes(artist_id=one_artist,user_id=one_user,rating=attr_list[2])
 				one_artist_likes.save()
 			except:
 				continue
