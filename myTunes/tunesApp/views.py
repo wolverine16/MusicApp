@@ -25,11 +25,11 @@ def favSongs(request):
 	cursor = connection.cursor()
 	#raw sql to be executed:
 	query = '''
-	SELECT s.song_id, s.title, s.key, s.duration, s.energy, 
-	s.tempo, s.danceability, s.time_sig, s.year, s.writer, 
+	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
+	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
 	s.loudness, sl.count, sl.rating
 	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s
-	WHERE u.username = sl.username and sl.song_id = s.song_id
+	WHERE u.username = sl.user_id_id and sl.song_id_id = s.song_id
 	ORDER BY sl.rating DESC;
 	'''
 	cursor.execute(query)
@@ -37,7 +37,7 @@ def favSongs(request):
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
 	keys = ['song_id','title','song_key','duration','energy',
-	'tempo','danceability','time_sig','year','writer',
+	'tempo','danceability','time_signature','year','writer',
 	'loudness','count','rating']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
