@@ -121,16 +121,21 @@ def favGenres(request):
 
 def search(request):
         if request.method == 'POST':
-                srch_form = SearchForm(request.POST)
-                if (srch_form.is_valid()):
-                        # run query
-
-                        return HttpResponseRedirect('/results/')
+                form = SearchForm(request.POST)
+                if (form.is_valid()):
+                        song = form.clean_data['song_name']
+                        artist = form.clean_data['artist_name']
+                        genre = form.clean_data['genre_name']
+                        album = form.clean_data['album_name']
+                        strt_yr = form.clean_data['strt_yr']
+                        end_yr = form.clean_data['end_yr']
+                        #run query
+                        return render(request, 'results.html', {})
                 
         else:
-                srch_form = SearchForm()
+                form = SearchForm()
         
-        return render(request, 'search.html', {'form', srch_form})
+        return render(request, 'search.html')
 
 
 def test(request):
