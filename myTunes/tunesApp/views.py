@@ -30,13 +30,11 @@ def favSongs(request):
 	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
 	s.loudness, sl.count, sl.rating
 	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s
-	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id
+	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
 	ORDER BY sl.rating DESC;
 	'''
-	cursor.execute(query)
+	cursor.execute(query,[loggedInUser.username])
 	transactions = [to_string(x) for x in cursor.fetchall()]
-	#print(transactions)
-	#transactions = [{"id":1},{"id":2}]
 	keys = ['song_id','title','song_key','duration','energy',
 	'tempo','danceability','time_signature','year','writer',
 	'loudness','count','rating']
@@ -84,7 +82,7 @@ def favArtists(request):
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
-	keys = ['artist_id','artist name','rating']
+	keys = ['artist_id','artist_name','rating']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}

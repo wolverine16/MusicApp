@@ -2,12 +2,11 @@
 {% block content %}
 <p>Hello, favorite artists!</p>
 	{% for trans in masterList %}
-	<tr>
-		<td>
+		<p>
 			{{trans.artist_id}}
 			{{trans.artist_name}}
 			{{trans.rating}}
-		</td>
-	</tr>
+			<br />
+		</p>
 	{% endfor %}
 {% endblock %}
