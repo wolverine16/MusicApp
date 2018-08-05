@@ -24,12 +24,13 @@ def favSongs(request):
 	"""Favorite songs for the user."""
 	cursor = connection.cursor()
 	#raw sql to be executed:
+	loggedInUser = request.user
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
 	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
 	s.loudness, sl.count, sl.rating
 	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s
-	WHERE u.username = sl.user_id_id and sl.song_id_id = s.song_id
+	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id
 	ORDER BY sl.rating DESC;
 	'''
 	cursor.execute(query)
@@ -72,13 +73,14 @@ def favArtists(request):
 	"""Favorite songs for the user."""
 	cursor = connection.cursor()
 	#raw sql to be executed:
+	loggedInUser = request.user
 	query = '''
 	SELECT a.artist_id, a.artist_name, al.rating
 	FROM auth_user u, tunesapp_Artist_likes al, tunesapp_Artist a
-	WHERE u.username = al.user_id_id and al.artist_id_id = a.artist_id
+	WHERE u.id = al.user_id_id and al.artist_id_id = a.artist_id and u.username = %s
 	ORDER BY al.rating DESC;
 	'''
-	cursor.execute(query)
+	cursor.execute(query,[loggedInUser.username])
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
@@ -99,13 +101,14 @@ def favGenres(request):
 	"""Favorite songs for the user."""
 	cursor = connection.cursor()
 	#raw sql to be executed:
+	loggedInUser = request.user
 	query = '''
 	SELECT g.genre_id, g.label, gl.rating
 	FROM auth_user u, tunesapp_Genre_likes gl, tunesapp_Genre g
-	WHERE u.id = gl.user_id_id and gl.genre_id_id = g.genre_id and gl.user_id_id = 5 
-	ORDER BY gl.rating DESC
+	WHERE u.id = gl.user_id_id and gl.genre_id_id = g.genre_id and u.username = %s
+	ORDER BY gl.rating DESC;
 	'''
-	cursor.execute(query)
+	cursor.execute(query, [loggedInUser.username])
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
@@ -119,7 +122,6 @@ def favGenres(request):
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
 		tempDict = {}
-	print(masterList)
 	return render(request, 'favorite_genres.html',{'masterList':masterList})
 	
 def test(request):
