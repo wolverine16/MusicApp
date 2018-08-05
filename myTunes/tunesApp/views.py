@@ -123,12 +123,12 @@ def search(request):
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
 		if (form.is_valid()):
-			song = "\'" + form.clean_data['song_name'] + "\'"
-			artist = "\'" + form.clean_data['artist_name'] + "\'"
-			genre = "\'" + form.clean_data['genre_name'] + "\'"
-			album = "\'" + form.clean_data['album_name'] + "\'"
-			strt_yr = "\'" + form.clean_data['strt_yr'] + "\'"
-			end_yr = "\'" + form.clean_data['end_yr'] + "\'"
+			song = "\'" + form.cleaned_data['song_name'] + "\'"
+			artist = "\'" + form.cleaned_data['artist_name'] + "\'"
+			genre = "\'" + form.cleaned_data['genre_name'] + "\'"
+			album = "\'" + form.cleaned_data['album_name'] + "\'"
+			strt_yr = "\'" + form.cleaned_data['strt_yr'] + "\'"
+			end_yr = "\'" + form.cleaned_data['end_yr'] + "\'"
 			#run query
 			cursor = connection.cursor()					
 			query = '''
