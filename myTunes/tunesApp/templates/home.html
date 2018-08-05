@@ -1,21 +1,25 @@
 {% extends "base.html" %}
 
+{% load static %}
+
     {% block custom_style %}
       <!-- Custom styles for this template -->
-      <link href="starter-template.css" rel="stylesheet">
+      <link href="{% static 'tunesApp/home_page.css' %}" rel="stylesheet">
     {% endblock custom_style %}
     
    {% block content %}
 
       <div class="starter-template">
 		{% if user.is_authenticated %}
-          <h1>Welcome to MyTunes, {{ user.username }}!</h1>
+          <h1>Welcome to MyTunes, {{ user.first_name }}!</h1>
+          <p class="lead">Go to the Search page to search songs in our database
+			<br> or click on one of the Favorites pages to manage your list of favorites.</p>
         {% else %}
           <h1>Welcome to MyTunes!</h1>
           <h3>Please <a href="{% url 'login' %}">sign in</a> to save your favorite songs.</h3>
+          <p class="lead">You may also go to the Search page to search songs in our database.</p>
         {% endif %}
-        <p class="lead">Go to the Search page to search songs in our database
-        <br> or click on one of the Favorites pages to manage your list of favorites.</p>
+
       </div>
 
   
