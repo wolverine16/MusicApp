@@ -4,5 +4,48 @@
 
 {% block content %}
 <!-- Add stuff here -->
+<div class="container">
+<form method="post" id="srch_frm" class="form-horizontal">
+	{% csrf_token %}
+	<div class="form-group row">
+		<label class="col-sm-1 control-label" for="song">Song:</label>
+		<div class="col-sm-6">
+			<input class="form-control" type="text" name="Song" placeholder="Song" value="{{ song_name }}">
+		</div>
+	</div> 
+	<div class="form-group row">
+		<label class="col-sm-1 control-label" for="artist">Artist:</label>
+		<div class="col-sm-6">
+			<input class="form-control" type="text" name="Artist" placeholder="Artist" value="{{ artist_name }}">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-1 control-label" for="genre">Genre:</label>
+		<div class="col-sm-6">
+			<input class="form-control" type="text" name="Genre" placeholder="Genre" value="{{ genre_name }}">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-1 control-label" for="album">Album:</label>
+		<div class="col-sm-6">
+			<input class="form-control" type="text" name="Album" placeholder="Album" value="{{ album_name }}">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-sm-1 control-label">Year:</label>
+		<div class="col-sm-3">
+			<input class="form-control" type="text" name="strt_year" placeholder="Start year (if range)" value="{{strt_yr}}">
+		</div>
+		<div class="col-sm-3">
+			<input class="form-control" type="text" name="end_year" placeholder="End year (if range)" value="{{end_yr}}">
+		</div>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-3 center">
+			<button type="submit" class="btn">Search</button>
+		</div>
+	</div>
+</form>
+</div>
 
 {% endblock content %}
