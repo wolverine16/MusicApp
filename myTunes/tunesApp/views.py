@@ -25,7 +25,7 @@ def favSongs(request):
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
 	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
-	s.loudness, sl.count, sl.rating
+	s.loudness, sl.count, sl.rating, sl.id
 	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s
 	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
 	ORDER BY sl.rating DESC;
@@ -34,7 +34,7 @@ def favSongs(request):
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	keys = ['song_id','title','song_key','duration','energy',
 	'tempo','danceability','time_signature','year','writer',
-	'loudness','count','rating']
+	'loudness','count','rating','id']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}
@@ -70,7 +70,7 @@ def favArtists(request):
 	#raw sql to be executed:
 	loggedInUser = request.user
 	query = '''
-	SELECT a.artist_id, a.artist_name, al.rating
+	SELECT a.artist_id, a.artist_name, al.rating,al.id
 	FROM auth_user u, tunesapp_Artist_likes al, tunesapp_Artist a
 	WHERE u.id = al.user_id_id and al.artist_id_id = a.artist_id and u.username = %s
 	ORDER BY al.rating DESC;
@@ -79,7 +79,7 @@ def favArtists(request):
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
-	keys = ['artist_id','artist_name','rating']
+	keys = ['artist_id','artist_name','rating','id']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}
@@ -148,13 +148,13 @@ def album_info(request, **kwargs):
 	print(kwargs)
 	album_id = 0; #UPDATE THIS WITH PARSED OUT FIELD FROM KWARGS
 	query = '''
-	SELECT s.title,a.album_name
+	SELECT s.title,a.album_name,ai.album_id
 	FROM Album a, Appears_in ai, Song s
 	WHERE a.album_id = ai.album_id and ai.song_id = s.song_id and a.album_id = %s;
 	'''
 	cursor.execute(query,[album_id])
 	transactions = [to_string(x) for x in cursor.fetchall()]
-	keys = ['title']
+	keys = ['title','album_name','album_id']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}
