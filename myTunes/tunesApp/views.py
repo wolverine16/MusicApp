@@ -119,6 +119,12 @@ def favGenres(request):
 		tempDict = {}
 	return render(request, 'favorite_genres.html',{'masterList':masterList})
 
+def get_search_query(s):
+	query_str = '''
+	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, s.tempo, 
+	s.danceability, s.time_signature, s.year, s.writer, s.loudness
+	'''
+
 def search(request):
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
@@ -130,20 +136,25 @@ def search(request):
 			strt_yr =  form.cleaned_data['strt_yr'] 
 			end_yr =  form.cleaned_data['end_yr'] 
 			#run query
+			query = get_search_query(song, artist, genre, album, strt_yr, end_yr)
 			cursor = connection.cursor()					
 			query = '''
 			SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, s.tempo, 
-			s.danceability, s.time_signature, s.year, s.writer, s.loudness
+			s.danceability, s.time_signature, s.year, s.writer, s.loudness,g.genre_id, 
+			g.label, art.artist_id, art.artist_name, a.album_id, a.album_name, s.year
 			FROM tunesApp_song s 
 			LEFT OUTER JOIN tunesapp_song_song_genres bt ON s.song_id = bt.song_id
 			LEFT OUTER JOIN tunesapp_song_song_albums ai ON s.song_id = ai.song_id
-			LEFT OUTER JOIN tunesapp_song_song_artists pl ON s.song_id = pl.song_id,
+			LEFT OUTER JOIN tunesapp_song_song_artists pl ON s.song_id = pl.song_id
+			INNER JOIN tunesapp_genre g on bt.genre_id = g.genre_id
+			INNER JOIN tunesapp_album a on ai.album_id = a.album_id
+			INNER JOIN tunesapp_artist art on pl.artist_id = art.artist_id
 			tunesapp_genre g, tunesapp_album a, tunesapp_artist art
 			WHERE s.title LIKE IF(songStr is NULL, '%', CONCAT('%',songStr,'%')) 
 			AND g.label LIKE IF(genreStr is NULL, '%', CONCAT('%',genreStr,'%')) 
 			AND art.artist_name LIKE IF(artistStr is NULL, '%', CONCAT('%',artistStr,'%')) 
 			AND a.album_name LIKE IF(albumStr IS NULL, '%', CONCAT('%',albumStr,'%'))
-			S.year between year1Input and IF(year1Input = 0, 3000, IF(year2Input = 0, year1Input, year2Input))
+			#S.year between year1Input and IF(year1Input = 0, 3000, IF(year2Input = 0, year1Input, year2Input))
 			GROUP BY s.song_id
 			LIMIT 15;
 			'''
@@ -155,10 +166,12 @@ def search(request):
 			query = query.replace('albumStr',album)
 			query = query.replace('year1Input',str(strt_yr))
 			query = query.replace('year2Input',str(end_yr))
+			print(query)
 			cursor.execute(query)
 			transactions = [to_string(x) for x in cursor.fetchall()]
 			keys = ['song_id', 'title', 'song_key','duration','energy','tempo',
-			'danceability','time_signature','year','writer','loudness']
+			'danceability','time_signature','year','writer','loudness', 'genre_id,',
+			'label','artist_id','artist_name','album_id','album_name','year']
 			# corresponding numeric value for each key to be used to populate dictionary
 			countLst = range(len(keys))
 			tempDict = {}
