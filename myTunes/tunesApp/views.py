@@ -143,7 +143,7 @@ def search(request):
 			AND g.label LIKE IF(genreStr is NULL, '%', CONCAT('%',genreStr,'%')) 
 			AND art.artist_name LIKE IF(artistStr is NULL, '%', CONCAT('%',artistStr,'%')) 
 			AND a.album_name LIKE IF(albumStr IS NULL, '%', CONCAT('%',albumStr,'%'))
-			S.year between y1 and IF(year1Input = 0, 3000, IF(year2Input = 0, year1Input year2Input))
+			S.year between year1Input and IF(year1Input = 0, 3000, IF(year2Input = 0, year1Input, year2Input))
 			GROUP BY s.song_id
 			LIMIT 15;
 			'''
@@ -153,8 +153,8 @@ def search(request):
 			query = query.replace('genreStr',genre)
 			query = query.replace('artistStr',artist)
 			query = query.replace('albumStr',album)
-			query = query.replace('year1Input',strt_yr)
-			query = query.replace('year2Input',end_yr)
+			query = query.replace('year1Input',str(strt_yr))
+			query = query.replace('year2Input',str(end_yr))
 			cursor.execute(query)
 			transactions = [to_string(x) for x in cursor.fetchall()]
 			keys = ['song_id', 'title', 'song_key','duration','energy','tempo',
