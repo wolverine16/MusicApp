@@ -34,7 +34,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
-    path('test/', views.test),
     path('album_info/<int:album_id>/',views.album_info)
     #path('users/', include(('users.urls', 'users'), namespace='users'))
     #path('accounts/', include('userena.urls')),
