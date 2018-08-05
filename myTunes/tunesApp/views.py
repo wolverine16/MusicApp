@@ -1,7 +1,11 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.db import connection
+from .forms import SearchForm
+
 import datetime
 import decimal
+
 
 # Create your views here.
 
@@ -121,7 +125,21 @@ def favGenres(request):
 		masterList.append(tempDict)
 		tempDict = {}
 	return render(request, 'favorite_genres.html',{'masterList':masterList})
-	
+
+def search(request):
+        if request.method == 'POST':
+                srch_form = SearchForm(request.POST)
+                if (srch_form.is_valid()):
+                        # run query
+
+                        return HttpResponseRedirect('/results/')
+                
+        else:
+                srch_form = SearchForm()
+        
+        return render(request, 'search.html', {'form', srch_form})
+
+
 def test(request):
 	"""Test page."""
 	return render(request, 'test.html')
