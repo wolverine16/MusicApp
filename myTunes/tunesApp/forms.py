@@ -6,3 +6,5 @@ class SearchForm(forms.Form):
 	genre_name = forms.CharField(label = 'genre', max_length = 150)
 	album_name = forms.CharField(label='album', max_length = 150)
 	strt_yr = forms.CharField(label = 'year', max_length = 150)
+
+
