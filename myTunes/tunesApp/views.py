@@ -127,8 +127,8 @@ def search(request):
 			artist = "\'" + form.clean_data['artist_name'] + "\'"
 			genre = "\'" + form.clean_data['genre_name'] + "\'"
 			album = "\'" + form.clean_data['album_name'] + "\'"
-			strt_yr = "\'" + form.clean_data['strt_yr'] + "\'"
-			end_yr = "\'" + form.clean_data['end_yr'] + "\'"
+			strt_yr =  form.clean_data['strt_yr'] 
+			end_yr =  form.clean_data['end_yr'] 
 			#run query
 			cursor = connection.cursor()					
 			query = '''
@@ -147,6 +147,7 @@ def search(request):
 			GROUP BY s.song_id
 			LIMIT 15;
 			'''
+			loggedInUser = request.user
 			# Replace variable names with user inputs from the client
 			query = query.replace('songStr',song)
 			query = query.replace('genreStr',genre)
