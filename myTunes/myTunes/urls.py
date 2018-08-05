@@ -31,6 +31,7 @@ urlpatterns = [
     path('favorites/artists', views.favArtists),
     path('favorites/genres', views.favGenres),
     path('search/', views.search),
+    path('search/results', views.results),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
