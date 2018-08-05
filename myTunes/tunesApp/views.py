@@ -120,58 +120,55 @@ def favGenres(request):
 	return render(request, 'favorite_genres.html',{'masterList':masterList})
 
 def search(request):
-        if request.method == 'POST':
-                form = SearchForm(request.POST)
-                if (form.is_valid()):
-                        song = "\'" + form.clean_data['song_name'] + "\'"
-                        artist = "\'" + form.clean_data['artist_name'] + "\'"
-                        genre = "\'" + form.clean_data['genre_name'] + "\'"
-                        album = "\'" + form.clean_data['album_name'] + "\'"
-                        strt_yr = "\'" + form.clean_data['strt_yr'] + "\'"
-                        end_yr = "\'" + form.clean_data['end_yr'] + "\'"
-                        #run query
-                        cursor = connection.cursor()					
-						query = '''
-						SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, s.tempo, 
-						s.danceability, s.time_signature, s.year, s.writer, s.loudness
-						FROM tunesApp_song s 
-						LEFT OUTER JOIN tunesapp_song_song_genres bt ON s.song_id = bt.song_id
-						LEFT OUTER JOIN tunesapp_song_song_albums ai ON s.song_id = ai.song_id
-						LEFT OUTER JOIN tunesapp_song_song_artists pl ON s.song_id = pl.song_id,
-						tunesapp_genre g, tunesapp_album a, tunesapp_artist art
-						WHERE s.title LIKE IF(songStr is NULL, '%', CONCAT('%',songStr,'%')) 
-						AND g.label LIKE IF(genreStr is NULL, '%', CONCAT('%',genreStr,'%')) 
-						AND art.artist_name LIKE IF(artistStr is NULL, '%', CONCAT('%',artistStr,'%')) 
-						AND a.album_name LIKE IF(albumStr IS NULL, '%', CONCAT('%',albumStr,'%'))
-						S.year between y1 and IF(y1 = 0, 3000, IF(y2 = 0, y1, y2))
-						GROUP BY s.song_id
-						LIMIT 15;
-						'''
-						# Replace variable names with user inputs from the client
-						query = query.replace('songStr',song)
-						query = query.replace('genreStr',genre)
-						query = query.replace('artistStr',artist)
-						query = query.replae('albumStr',album)
-						
-						cursor.execute(query)
-						transactions = [to_string(x) for x in cursor.fetchall()]
-						keys = ['song_id', 'title', 'song_key','duration','energy','tempo',
-						'danceability','time_signature','year','writer','loudness']
-						# corresponding numeric value for each key to be used to populate dictionary
-						countLst = range(len(keys))
-						tempDict = {}
-						masterList = []
-						for tup in transactions:
-							for i in countLst:
-								tempDict[keys[i]] = tup[i]
-							masterList.append(tempDict)
-							tempDict = {}
-                        return render(request, 'results.html', {})
-                
-        else:
-                form = SearchForm()
-        
-        return render(request, 'search.html')
+	if request.method == 'POST':
+		form = SearchForm(request.POST)
+		if (form.is_valid()):
+			song = "\'" + form.clean_data['song_name'] + "\'"
+			artist = "\'" + form.clean_data['artist_name'] + "\'"
+			genre = "\'" + form.clean_data['genre_name'] + "\'"
+			album = "\'" + form.clean_data['album_name'] + "\'"
+			strt_yr = "\'" + form.clean_data['strt_yr'] + "\'"
+			end_yr = "\'" + form.clean_data['end_yr'] + "\'"
+			#run query
+			cursor = connection.cursor()					
+			query = '''
+			SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, s.tempo, 
+			s.danceability, s.time_signature, s.year, s.writer, s.loudness
+			FROM tunesApp_song s 
+			LEFT OUTER JOIN tunesapp_song_song_genres bt ON s.song_id = bt.song_id
+			LEFT OUTER JOIN tunesapp_song_song_albums ai ON s.song_id = ai.song_id
+			LEFT OUTER JOIN tunesapp_song_song_artists pl ON s.song_id = pl.song_id,
+			tunesapp_genre g, tunesapp_album a, tunesapp_artist art
+			WHERE s.title LIKE IF(songStr is NULL, '%', CONCAT('%',songStr,'%')) 
+			AND g.label LIKE IF(genreStr is NULL, '%', CONCAT('%',genreStr,'%')) 
+			AND art.artist_name LIKE IF(artistStr is NULL, '%', CONCAT('%',artistStr,'%')) 
+			AND a.album_name LIKE IF(albumStr IS NULL, '%', CONCAT('%',albumStr,'%'))
+			S.year between y1 and IF(y1 = 0, 3000, IF(y2 = 0, y1, y2))
+			GROUP BY s.song_id
+			LIMIT 15;
+			'''
+			# Replace variable names with user inputs from the client
+			query = query.replace('songStr',song)
+			query = query.replace('genreStr',genre)
+			query = query.replace('artistStr',artist)
+			query = query.replae('albumStr',album)
+			cursor.execute(query)
+			transactions = [to_string(x) for x in cursor.fetchall()]
+			keys = ['song_id', 'title', 'song_key','duration','energy','tempo',
+			'danceability','time_signature','year','writer','loudness']
+			# corresponding numeric value for each key to be used to populate dictionary
+			countLst = range(len(keys))
+			tempDict = {}
+			masterList = []
+			for tup in transactions:
+				for i in countLst:
+					tempDict[keys[i]] = tup[i]
+				masterList.append(tempDict)
+				tempDict = {}
+			return render(request, 'results.html', {}) 
+	else:
+		form = SearchForm()
+		return render(request, 'search.html')
 
 #NEED TO FINISH THIS BY PRINTING/PARSING OUT KWARGS
 def album_info(request, **kwargs):
