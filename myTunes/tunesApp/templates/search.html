@@ -9,42 +9,42 @@
 <h1>Search</h1>
 </div>
 <div class="row">
-<div class="col-sm-6">
+<div class="col-sm-8">
 <form action="/search/" method="post" id="srch_frm" class="form-horizontal">
 	{% csrf_token %}
-	{{ srch_form }}
+	{{ form }}
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="song">Song:</label>
 		<div class="col-sm-6">
-			<input class="form-control" type="text" name="Song" placeholder="Song" value="{{ song_name }}">
+			<input class="form-control" type="text" name="song_name" placeholder="Song" value="">
 		</div>
 	</div> 
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="artist">Artist:</label>
 		<div class="col-sm-6">
-			<input class="form-control" type="text" name="Artist" placeholder="Artist" value="{{ artist_name }}">
+			<input class="form-control" type="text" name="artist_name" placeholder="Artist" value="">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="genre">Genre:</label>
 		<div class="col-sm-6">
-			<input class="form-control" type="text" name="Genre" placeholder="Genre" value="{{ genre_name }}">
+			<input class="form-control" type="text" name="genre_name" placeholder="Genre" value="">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="album">Album:</label>
 		<div class="col-sm-6">
-			<input class="form-control" type="text" name="Album" placeholder="Album" value="{{ album_name }}">
+			<input class="form-control" type="text" name="album_name" placeholder="Album" value="">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="start_year">Start Yr:</label>
 		<div class="col-sm-2">
-			<input class="form-control" type="text" name="strt_year" placeholder="Start year (if range)" value="{{ strt_yr }}">
+			<input class="form-control" type="text" name="strt_yr" placeholder="range" value="">
 		</div>
 		<label class="col-sm-1 control-label" for="end_year">End Yr:</label>
 		<div class="col-sm-2">
-			<input class="form-control" type="text" name="end_year" placeholder="End year (if range)" value="{{ end_yr }}">
+			<input class="form-control" type="text" name="end_yr" placeholder="range" value="">
 		</div>
 	</div>
 	<div class="form-group row">
@@ -54,9 +54,14 @@
 	</div>
 </form>
 </div>
-<div class="col-sm-6">
-		<h2>Recent Searches</h2>
-	
+<div class="sidenav text-center">
+	<div>
+		<h4>Popular Searches</h3>
+
+	</div>
+	<div>
+		<h4>Recent Searches</h3>
+	</div>
 </div>
 </div>
 </div>

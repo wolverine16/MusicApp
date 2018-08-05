@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock title %}
+
+{% block content %}
+<!-- Add stuff here -->
+<div class="container-fluid">
+<div class="page-header text-center">
+<h1>Search Results</h1>
+</div>
+<div class="row">
+<div class="col-sm-7">
+<form action="/search/" method="post" id="srch_frm" class="form-horizontal">
+	{% csrf_token %}
+
+	<table class="table-striped">
+	{{ form }}
+	</table>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% endblock content %}
