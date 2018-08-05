@@ -1,12 +1,62 @@
 {% extends "base.html" %}
+
+{% block title %}Favorite Genres{% endblock title %}
+
 {% block content %}
-<p>Hello, favorite genres!</p>
-	{% for trans in masterList %}
-		<p>
-			{{trans.genre_id}}
-			{{trans.label}}
-			{{trans.rating}}
-			<br />	
-		</p>
-	{% endfor %}
+
+<div class="container-fluid"></div>
+
+  <h1>Favorite Genres</h1>
+  <div class="row">
+    <div class="col-sm-2">
+	  <h4>ID</h4>
+	</div>
+	<div class="col-sm-6">
+	  <h4>Genre Label</h4>
+	</div>
+	<div class="col-sm-2">
+	  <h4>Delete?</h4>
+	</div>
+	<div class="col-sm-2 text-right">
+	  <h4>Rating</h4>
+	</div>
+  </div>
+  
+  {% for trans in masterList %}
+  <div class="row">
+    <div class="col-sm-2">
+	  <h5>{{ trans.genre_id }}</h5>
+	</div>
+	<div class="col-sm-6">
+	  <h5>{{ trans.label }}</h5>
+	</div>
+	<div class="col-sm-2 text-center">
+		<div class="form-check">
+		<input type="checkbox" class="form-check-input" id="exampleCheck{{ trans.genre_id }}">
+		</div>
+	</div>
+	<div class="col-sm-2 text-right">
+		
+		
+		<div class="dropdown">
+		<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		{{ trans.rating }}
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			
+			{% with ''|center:10 as range %}
+			{% for _ in range %}
+				<a class="dropdown-item">{{ forloop.counter }}</a>
+			{% endfor %}
+			{% endwith %}
+		</div>
+		</div>
+
+	</div>
+	<br/>
+  </div>
+  {% endfor %}
+	
+</div>
+	
 {% endblock %}
