@@ -98,7 +98,7 @@ def favGenres(request):
 	#raw sql to be executed:
 	loggedInUser = request.user
 	query = '''
-	SELECT g.genre_id, g.label, gl.rating
+	SELECT g.genre_id, g.label, gl.rating, gl.id
 	FROM auth_user u, tunesapp_Genre_likes gl, tunesapp_Genre g
 	WHERE u.id = gl.user_id_id and gl.genre_id_id = g.genre_id and u.username = %s
 	ORDER BY gl.rating DESC;
@@ -107,7 +107,7 @@ def favGenres(request):
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
-	keys = ['genre_id', 'label', 'rating']
+	keys = ['genre_id', 'label', 'rating','id']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}
