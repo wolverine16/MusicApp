@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<p>Additional album information</p>
+	{{trans.album_name}}
+	{% for trans in masterList %}
+		<p>
+			{{trans.title}}
+			<br />	
+		</p>
+	{% endfor %}
+{% endblock %}

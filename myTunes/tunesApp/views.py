@@ -13,13 +13,6 @@ def home(request):
 	"""The home page for the myTunes app."""
 	return render(request, 'home.html')
 	
-def searchApp(request):
-	"""Initial page for entering search parameters."""
-	# Pass in form fields
-	# Process POST events
-	# Validate entered data
-	return render(request, 'search.html')
-	
 def favorites(request):
 	"""Favorites landing page."""
 	return render(request, 'favorites_general.html')
@@ -143,3 +136,27 @@ def search(request):
 def test(request):
 	"""Test page."""
 	return render(request, 'test.html')
+
+#NEED TO FINISH THIS BY PRINTING/PARSING OUT KWARGS
+def album_info(request, **kwargs):
+	cursor = connection.cursor()
+	print(kwargs)
+	album_id = 0; #UPDATE THIS WITH PARSED OUT FIELD FROM KWARGS
+	query = '''
+	SELECT s.title,a.album_name
+	FROM Album a, Appears_in ai, Song s
+	WHERE a.album_id = ai.album_id and ai.song_id = s.song_id and a.album_id = %s;
+	'''
+	cursor.execute(query,[album_id])
+	transactions = [to_string(x) for x in cursor.fetchall()]
+	keys = ['title']
+	# corresponding numeric value for each key to be used to populate dictionary
+	countLst = range(len(keys))
+	tempDict = {}
+	masterList = []
+	for tup in transactions:
+		for i in countLst:
+			tempDict[keys[i]] = tup[i]
+		masterList.append(tempDict)
+		tempDict = {}
+	return render(request, 'album_info.html',{'masterList':masterList})
