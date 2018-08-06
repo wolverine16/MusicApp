@@ -43,5 +43,27 @@ class BaseGenreFavsFormSet(BaseFormSet):
 				
 				if rating < 1 or rating > 10:
 					raise forms.ValidationError('Rating must be between 1 and 10.', code='wrong_rating')
-					
+				
+
+class ArtistFavsForm(forms.Form):
+	artist_id = forms.IntegerField(label='artist_id', required=False, widget=forms.HiddenInput())
+	artist_name = forms.CharField(label='artist_name', required=False, widget=forms.HiddenInput())
+	al_id = forms.IntegerField(label='al_id', widget=forms.HiddenInput())
+	al_delete = forms.BooleanField(initial=False, label='gl_delete', required=False)
+	artist_rating = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control'}), label='artist_rating')
+	
+	
+class BaseArtistFavsFormSet(BaseFormSet):
+	def clean(self):
+		"""Validate that rating is only between 0 and 10"""
+		if any(self.errors):
+			return
+			
+		for form in self.forms:
+			if form.cleaned_data:
+				rating = form.cleaned_data['artist_rating']
+				
+				if rating < 1 or rating > 10:
+					raise forms.ValidationError('Rating must be between 1 and 10.', code='wrong_rating')
+	
 

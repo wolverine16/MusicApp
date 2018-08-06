@@ -58,15 +58,46 @@ def favArtists(request):
 	"""Favorite songs for the user."""
 
 	query = '''
-	SELECT a.artist_id, a.artist_name, al.rating,al.id
+	SELECT a.artist_id, a.artist_name, al.rating, al.id, 'False'
 	FROM auth_user u, tunesapp_Artist_likes al, tunesapp_Artist a
 	WHERE u.id = al.user_id_id and al.artist_id_id = a.artist_id and u.username = %s
 	ORDER BY al.rating DESC;
 	'''
-	keys = ['artist_id','artist_name','rating','id']
+	keys = ['artist_id','artist_name','artist_rating', 'al_id', 'al_delete']
 		
+		
+	if request.method == 'POST':
+		initialDict = createDict(request, query, keys)
+		editFavArtists(request, initialDict) # We delete the entry and then return to reload the page
 	masterList = createDict(request, query, keys)
-	return render(request, 'favorite_artists.html',{'masterList':masterList})
+	ArtistFavFormset = formset_factory(forms.ArtistFavsForm)
+	formset = ArtistFavFormset(initial=masterList, prefix='artist')
+	data = zip(masterList, formset)
+	return render(request, 'favorite_artists.html', {'data':data})   #{'masterList':masterList}, {'formset':formset})
+	
+def editFavArtists(request, initialDict):
+	form_ct = len(initialDict)
+	post_dict = request.POST.dict()
+
+	for key in post_dict.keys():
+		if 'al_delete' in key:
+			num_pos = key.find('artist-') + 7
+			id_num = key[num_pos]
+			al_id = post_dict['artist-' + id_num + '-al_id']
+			models.Artist_Likes.objects.get(pk=al_id).delete()
+			
+	for key in post_dict.keys():
+		if 'artist_rating' in key:
+			num_pos = key.find('artist-') + 7
+			id_num = key[num_pos]
+			new_rating = post_dict['artist-' + id_num + '-artist_rating']
+			al_id = post_dict['artist-' + id_num + '-al_id']
+			init_dict = initialDict[int(id_num)]
+			init_rating = init_dict['artist_rating']
+			if int(new_rating) != int(init_rating):
+				inst = models.Artist_Likes.objects.get(pk=al_id)
+				inst.rating = new_rating
+				inst.save()
 	
 # --- End Favorite Artists ---
 	
@@ -99,7 +130,7 @@ def editFavGenres(request, initialDict):
 	#print(initialDict)
 	#print(request.POST)
 	#print(request.POST.getlist('gl_delete'))
-	GenreFavFormset = formset_factory(forms.GenreFavsForm, formset=forms.BaseGenreFavsFormSet)
+	#GenreFavFormset = formset_factory(forms.GenreFavsForm, formset=forms.BaseGenreFavsFormSet)
 	post_dict = request.POST.dict()
 	#post_dict.update({'genre-TOTAL-FORMS': form_ct, 'genre-MAX_NUM_FORMS': '', 'genre-INITIAL_FORMS': '6'})
 	#formset = GenreFavFormset(initial=post_dict, prefix='genre')
