@@ -27,18 +27,9 @@ def favSongs(request):
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
 	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
-	s.loudness, sl.count, sl.rating, sl.id,al.album_name, 
-	art.artist_name, g.label
-	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s, 
-	tunesapp_song_song_albums sal LEFT OUTER JOIN tunesapp_album al
-	ON sal.album_id = al.album_id, 
-	tunesapp_song_song_artists sart LEFT OUTER JOIN tunesapp_artist art
-	on sart.artist_id = art.artist_id,
-	tunesapp_song_song_genres sg LEFT OUTER JOIN tunesapp_genre g
-	on sg.genre_id = g.genre_id
+	s.loudness, sl.count, sl.rating, sl.id
+	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s 
 	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
-	and sl.song_id_id = sal.song_id and sl.song_id_id = sart.song_id 
-	and sl.song_id_id = sg.song_id
 	ORDER BY sl.rating DESC;
 	'''
 	cursor.execute(query,[loggedInUser.username])
@@ -137,7 +128,6 @@ def get_search_query(s):
 	'''
 
 def search(request):
-
 	SearchResultsFormset = formset_factory(SearchResults)
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
@@ -166,7 +156,7 @@ def search(request):
 			WHERE '''
 			conditions = ''
 			queryTail = 'GROUP BY s.song_id LIMIT 15;'
-			queryFieldList = [song, genre, artist, album]# ]
+			queryFieldList = [song, genre, artist, album] # ]
 			nonNullIndices = []
 
 			#get all non-null indices. Order defiend by queryFIeldList
@@ -178,13 +168,13 @@ def search(request):
 			# append all but the last one. 
 			for num in range(len(nonNullIndices) - 1):
 				if nonNullIndices[num] == 0:
-					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \nAND'.format("\'" + song + "\'")
+					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \nAND '.format("\'" + song + "\'")
 				elif nonNullIndices[num] == 1:
-					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND'.format("\'" + genre + "\'")
+					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + genre + "\'")
 				elif nonNullIndices[num] == 2:
-					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND'.format("\'" + artist + "\'")
+					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + artist + "\'")
 				elif nonNullIndices[num] == 3:
-					conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND'.format("\'" + album + "\'")
+					conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + album + "\'")
 				# elif nonNullIndices[num] == 4:
 
 
@@ -226,7 +216,7 @@ def search(request):
 				masterList.append(tempDict)
 				tempDict = {}
 
-			srch_formset = SearchResultsFormset(masterList)
+			srch_formset = SearchResultsFormset(initial=masterList)
 			context = {'search_formset' : srch_formset}
 			return render(request, 'results.html', context) 
 	else:
