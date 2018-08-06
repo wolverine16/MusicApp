@@ -21,11 +21,13 @@
 	{% for srch_rslt in search_formset %}
 		<tr>
 			<td>
-				{{ srch_rslt.title }}
-				{{ srch_rslt.artist_name }}
-				{{ srch_rslt.label }}
-				{{ srch_rslt.album_name }}
-				{{ srch_rslt.year }}
+				<label class="col-sm-2 control-label">
+					{{ srch_rslt.title }}
+					{{ srch_rslt.artist_name }}
+					{{ srch_rslt.label }}
+					{{ srch_rslt.album_name }}
+					{{ srch_rslt.year }}
+				</label>
 				{{ srch_rslt.song_id }}
 				{{ srch_rslt.genre_id }}
 				{{ srch_rslt.artist_id }}
