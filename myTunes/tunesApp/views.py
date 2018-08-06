@@ -223,7 +223,6 @@ def search(request):
 					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + artist + "\'")
 				elif nonNullIndices[num] == 3:
 					conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + album + "\'")
-				# elif nonNullIndices[num] == 4:
 
 
 			#handle last condition 
@@ -236,10 +235,6 @@ def search(request):
 				conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + artist + "\'")
 			elif lastIndex == 3:
 				conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + album + "\'")
-			# elif lastIndex == 4:
-				# do something
-			# elif lastIndex == 5:
-				# do something
 
 			# merge them all
 			query = query + conditions + queryTail
