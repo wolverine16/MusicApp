@@ -2,6 +2,11 @@
 
 {% load static %}
 
+{% block custom_style %}
+	<!-- Custom styles for this template -->
+	<link href="{% static 'tunesApp/fav_pages.css' %}" rel="stylesheet">
+{% endblock custom_style %}
+
 {% block title %}Favorite Genres{% endblock title %}
 
 
@@ -14,7 +19,7 @@
     <div class="col-sm-2">
 	  <h4>ID</h4>
 	</div>
-	<div class="col-sm-6">
+	<div class="col-sm-6 text-center">
 	  <h4>Genre Label</h4>
 	</div>
 	<div class="col-sm-2">
@@ -35,7 +40,7 @@
   <!-- <input type="hidden" name="genre-{{ forloop.counter|add:'-1' }}-gl_id" value="{{ trans.gl_id }}" id="id_genre-{{ forloop.counter|add:'-1' }}-gl_id"> -->
   
   <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-2 text-left">
 	  <h5>{{ trans.genre_id }}</h5>
 	  {{ form.gl_id }}
 	  {{ form.genre_id }}
