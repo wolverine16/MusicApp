@@ -27,19 +27,40 @@ def favSongs(request):
 	cursor = connection.cursor()
 	#raw sql to be executed:
 	loggedInUser = request.user
+
 	query = '''
-	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
-	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
-	s.loudness, sl.count, sl.rating, sl.id
-	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s 
-	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
-	ORDER BY sl.rating DESC;
+	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy,
+	s.tempo, s.danceability, s.time_signature, s.year, s.writer,
+	s.loudness, sl.count, sl.rating, sl.id,sal.album_id,sart.artist_id,
+	sg.genre_id, al.album_name, art.artist_name, g.label
+	FROM tunesapp_song_likes sl 
+	LEFT OUTER JOIN auth_user u ON sl.user_id_id = u.id 
+	LEFT OUTER JOIN tunesapp_song s ON sl.song_id_id = s.song_id
+	LEFT OUTER JOIN tunesapp_song_song_albums sal ON sl.song_id_id = sal.song_id
+	LEFT OUTER JOIN tunesapp_song_song_artists sart ON sl.song_id_id = sart.song_id
+	LEFT OUTER JOIN tunesapp_song_song_genres sg ON sl.song_id_id = sg.song_id
+	LEFT OUTER JOIN tunesapp_album al ON sal.album_id = al.album_id
+	LEFT OUTER JOIN tunesapp_artist art ON sart.artist_id = art.artist_id
+	LEFT OUTER JOIN tunesapp_genre g ON sg.genre_id = g.genre_id
+	WHERE u.username =%s
+	ORDER BY sl.rating DESC
+
 	'''
+
+	##query = '''
+	##SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
+	#s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
+	#s.loudness, sl.count, sl.rating, sl.id
+	#FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s 
+	#WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
+	#ORDER BY sl.rating DESC;
+	#'''
 	cursor.execute(query,[loggedInUser.username])
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	keys = ['song_id','title','song_key','duration','energy',
 	'tempo','danceability','time_signature','year','writer',
-	'loudness','count','rating','id']
+	'loudness','count','rating','id', 'album_id', 'artist_id',
+	'genre_id', 'album_name', 'artist_name', 'label']
 	# corresponding numeric value for each key to be used to populate dictionary
 	masterList = make_masterList(transactions, keys)
 	return render(request, 'favorite_songs.html',{'masterList':masterList})
@@ -71,7 +92,6 @@ def favArtists(request):
 
 def favGenres(request):
 	"""Favorite songs for the user."""
-	
 	if request.method == 'POST':
 		initialDict = createGenreDict(request)
 		deleteFavGenres(request, initialDict) # We delete the entry and then return to reload the page
