@@ -7,7 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myTunes.settings")
 from django.core.management import execute_from_command_line
 
 #sys.path.append(os.path.join(BASE_DIR, 'myTunes'))
-sys.path.append("C:\\mystuff\\UWCS564\\project\\sharedFiles\\MusicApp\\myTunes")
+sys.path.append("D:\\Dropbox\\Personal Files\\Assignments\\CS 564 - Database Management\\Project\\MusicApp\\myTunes")
 
 django.setup()
 
@@ -44,8 +44,11 @@ def load_genres(filename='genre_v1.csv'):
 		for line in genre_file:
 			line = line.rstrip(newline)
 			attr_list = line.split(delim)
-			genre = Genre(genre_id=int(attr_list[0]), label=attr_list[1])
-			genre.save()
+			try:
+				genre = Genre(genre_id=int(attr_list[0]), label=attr_list[1])
+				genre.save()
+			except:
+				continue
 	print("Genre file loaded!!")
 
 def load_songs(filename='song_v1.csv'):
@@ -177,3 +180,5 @@ def remove_duplicates(input_filename, output_filename):
 				lines_seen.add(line)
 	out_file.close()
 
+if __name__ == "__main__":
+	load_user_likes_genre()

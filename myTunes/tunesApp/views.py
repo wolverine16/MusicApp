@@ -24,9 +24,6 @@ def favorites(request):
 	
 def favSongs(request):
 	"""Favorite songs for the user."""
-	cursor = connection.cursor()
-	#raw sql to be executed:
-	loggedInUser = request.user
 
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy,
@@ -46,83 +43,60 @@ def favSongs(request):
 	ORDER BY sl.rating DESC
 
 	'''
-
-	##query = '''
-	##SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
-	#s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
-	#s.loudness, sl.count, sl.rating, sl.id
-	#FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s 
-	#WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
-	#ORDER BY sl.rating DESC;
-	#'''
-	cursor.execute(query,[loggedInUser.username])
-	transactions = [to_string(x) for x in cursor.fetchall()]
 	keys = ['song_id','title','song_key','duration','energy',
 	'tempo','danceability','time_signature','year','writer',
 	'loudness','count','rating','id', 'album_id', 'artist_id',
 	'genre_id', 'album_name', 'artist_name', 'label']
-	# corresponding numeric value for each key to be used to populate dictionary
-	masterList = make_masterList(transactions, keys)
+
+	masterList = createDict(request, query, keys)
 	return render(request, 'favorite_songs.html',{'masterList':masterList})
 	
+# --- Favorite Artists Handling ---
 
 def favArtists(request):
 	"""Favorite artists for the user."""
 	"""Favorite songs for the user."""
-	cursor = connection.cursor()
-	#raw sql to be executed:
-	loggedInUser = request.user
+
 	query = '''
 	SELECT a.artist_id, a.artist_name, al.rating,al.id
 	FROM auth_user u, tunesapp_Artist_likes al, tunesapp_Artist a
 	WHERE u.id = al.user_id_id and al.artist_id_id = a.artist_id and u.username = %s
 	ORDER BY al.rating DESC;
 	'''
-	cursor.execute(query,[loggedInUser.username])
-	transactions = [to_string(x) for x in cursor.fetchall()]
-	#print(transactions)
-	#transactions = [{"id":1},{"id":2}]
 	keys = ['artist_id','artist_name','rating','id']
-	# corresponding numeric value for each key to be used to populate dictionary
-	masterList = make_masterList(transactions, keys)
+		
+	masterList = createDict(request, query, keys)
 	return render(request, 'favorite_artists.html',{'masterList':masterList})
+	
+# --- End Favorite Artists ---
 	
 	
 # --- Favorite Genres Handling ---
 
 def favGenres(request):
 	"""Favorite songs for the user."""
-	if request.method == 'POST':
-		initialDict = createGenreDict(request)
-		deleteFavGenres(request, initialDict) # We delete the entry and then return to reload the page
-	masterList = createGenreDict(request)
-	GenreFavFormset = formset_factory(forms.GenreFavsForm)
-	formset = GenreFavFormset(initial=masterList, prefix='genre')
-	#print(formset)
-	data = zip(masterList, formset)
-	return render(request, 'favorite_genres.html', {'data':data})   #{'masterList':masterList}, {'formset':formset})
-	
-def createGenreDict(request):
-	cursor = connection.cursor()
-	#raw sql to be executed:
-	loggedInUser = request.user
+
 	query = '''
 	SELECT g.genre_id, g.label, gl.rating, gl.id, 'False'
 	FROM auth_user u, tunesapp_Genre_likes gl, tunesapp_Genre g
 	WHERE u.id = gl.user_id_id and gl.genre_id_id = g.genre_id and u.username = %s
 	ORDER BY gl.rating DESC;
 	'''
-	cursor.execute(query, [loggedInUser.username])
-	transactions = [to_string(x) for x in cursor.fetchall()]
-	#print(transactions)
-	#transactions = [{"id":1},{"id":2}]
 	keys = ['genre_id', 'genre_label', 'genre_rating','gl_id', 'gl_delete']
-	# corresponding numeric value for each key to be used to populate dictionary
-	masterList = make_masterList(transactions, keys)
-	return masterList
 	
-def deleteFavGenres(request, initialDict):
+	if request.method == 'POST':
+		initialDict = createDict(request, query, keys)
+		editFavGenres(request, initialDict) # We delete the entry and then return to reload the page
+	masterList = createDict(request, query, keys)
+	GenreFavFormset = formset_factory(forms.GenreFavsForm)
+	formset = GenreFavFormset(initial=masterList, prefix='genre')
+	#print(formset)
+	data = zip(masterList, formset)
+	return render(request, 'favorite_genres.html', {'data':data})   #{'masterList':masterList}, {'formset':formset})
+	
+def editFavGenres(request, initialDict):
 	form_ct = len(initialDict)
+	#print(initialDict)
 	#print(request.POST)
 	#print(request.POST.getlist('gl_delete'))
 	GenreFavFormset = formset_factory(forms.GenreFavsForm, formset=forms.BaseGenreFavsFormSet)
@@ -130,7 +104,7 @@ def deleteFavGenres(request, initialDict):
 	#post_dict.update({'genre-TOTAL-FORMS': form_ct, 'genre-MAX_NUM_FORMS': '', 'genre-INITIAL_FORMS': '6'})
 	#formset = GenreFavFormset(initial=post_dict, prefix='genre')
 	#print(formset)
-	print(post_dict)
+	#print(post_dict)
 	#formset = GenreFavFormset(request.POST)
 
 	#delete_list = request.POST.getlist('gl_delete')
@@ -145,11 +119,18 @@ def deleteFavGenres(request, initialDict):
 		if 'genre_rating' in key:
 			num_pos = key.find('genre-') + 6
 			id_num = key[num_pos]
-			rating = post_dict['genre-' + id_num + '-genre_rating']
+			new_rating = post_dict['genre-' + id_num + '-genre_rating']
 			gl_id = post_dict['genre-' + id_num + '-gl_id']
+			init_dict = initialDict[int(id_num)]
+			init_rating = init_dict['genre_rating']
+			if int(new_rating) != int(init_rating):
+				#print(str(gl_id) + ": " + str(new_rating))
+				inst = models.Genre_Likes.objects.get(pk=gl_id)
+				inst.rating = new_rating
+				inst.save()
 			
 			
-
+	# This doesn't work :'(
 	'''if formset.is_valid():
 		gl_entry = form.cleaned_data['gl_id']
 		entry_delete = form.cleaned_data['gl_delete']
@@ -344,4 +325,16 @@ def make_masterList(transactions, keys):
 				tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
 		tempDict = {}
+	return masterList
+	
+def createDict(request, query, keys):
+	cursor = connection.cursor()
+	#raw sql to be executed:
+	loggedInUser = request.user
+	cursor.execute(query, [loggedInUser.username])
+	transactions = [to_string(x) for x in cursor.fetchall()]
+	#print(transactions)
+	#transactions = [{"id":1},{"id":2}]
+	# corresponding numeric value for each key to be used to populate dictionary
+	masterList = make_masterList(transactions, keys)
 	return masterList
