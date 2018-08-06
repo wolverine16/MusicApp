@@ -5,6 +5,9 @@ from django.forms import formset_factory
 from .forms import SearchForm, SearchResults
 from tunesApp.models import Song, Song_Likes
 
+from . import forms
+from . import models
+
 import datetime
 import decimal
 
@@ -38,31 +41,8 @@ def favSongs(request):
 	'tempo','danceability','time_signature','year','writer',
 	'loudness','count','rating','id']
 	# corresponding numeric value for each key to be used to populate dictionary
-	countLst = range(len(keys))
-	tempDict = {}
-	masterList = []
-	for tup in transactions:
-		for i in countLst:
-			tempDict[keys[i]] = tup[i]
-		masterList.append(tempDict)
-		tempDict = {}
-	# print(masterList)
+	masterList = make_masterList(transactions, keys)
 	return render(request, 'favorite_songs.html',{'masterList':masterList})
-
-def to_string(x):
-	'''Function for converting data into string form so that it can be rendered properly'''
-	a = []
-	for y in x:
-		print(type(y),y)
-		if type(y) is datetime.datetime:
-			a.append(str(y))
-		elif type(y) is decimal.Decimal:
-			a.append(str(y))
-		elif type(y) is float:
-			a.append(str(y))
-		else:
-			a.append(y)
-	return a
 	
 
 def favArtists(request):
@@ -83,24 +63,31 @@ def favArtists(request):
 	#transactions = [{"id":1},{"id":2}]
 	keys = ['artist_id','artist_name','rating','id']
 	# corresponding numeric value for each key to be used to populate dictionary
-	countLst = range(len(keys))
-	tempDict = {}
-	masterList = []
-	for tup in transactions:
-		for i in countLst:
-			tempDict[keys[i]] = tup[i]
-		masterList.append(tempDict)
-		tempDict = {}
-	# print(masterList)
+	masterList = make_masterList(transactions, keys)
 	return render(request, 'favorite_artists.html',{'masterList':masterList})
 	
+	
+# --- Favorite Genres Handling ---
+
 def favGenres(request):
 	"""Favorite songs for the user."""
+	
+	if request.method == 'POST':
+		initialDict = createGenreDict(request)
+		deleteFavGenres(request, initialDict) # We delete the entry and then return to reload the page
+	masterList = createGenreDict(request)
+	GenreFavFormset = formset_factory(forms.GenreFavsForm)
+	formset = GenreFavFormset(initial=masterList, prefix='genre')
+	#print(formset)
+	data = zip(masterList, formset)
+	return render(request, 'favorite_genres.html', {'data':data})   #{'masterList':masterList}, {'formset':formset})
+	
+def createGenreDict(request):
 	cursor = connection.cursor()
 	#raw sql to be executed:
 	loggedInUser = request.user
 	query = '''
-	SELECT g.genre_id, g.label, gl.rating, gl.id
+	SELECT g.genre_id, g.label, gl.rating, gl.id, 'False'
 	FROM auth_user u, tunesapp_Genre_likes gl, tunesapp_Genre g
 	WHERE u.id = gl.user_id_id and gl.genre_id_id = g.genre_id and u.username = %s
 	ORDER BY gl.rating DESC;
@@ -109,17 +96,58 @@ def favGenres(request):
 	transactions = [to_string(x) for x in cursor.fetchall()]
 	#print(transactions)
 	#transactions = [{"id":1},{"id":2}]
-	keys = ['genre_id', 'label', 'rating','id']
+	keys = ['genre_id', 'genre_label', 'genre_rating','gl_id', 'gl_delete']
 	# corresponding numeric value for each key to be used to populate dictionary
-	countLst = range(len(keys))
-	tempDict = {}
-	masterList = []
-	for tup in transactions:
-		for i in countLst:
-			tempDict[keys[i]] = tup[i]
-		masterList.append(tempDict)
-		tempDict = {}
-	return render(request, 'favorite_genres.html',{'masterList':masterList})
+	masterList = make_masterList(transactions, keys)
+	return masterList
+	
+def deleteFavGenres(request, initialDict):
+	form_ct = len(initialDict)
+	#print(request.POST)
+	#print(request.POST.getlist('gl_delete'))
+	GenreFavFormset = formset_factory(forms.GenreFavsForm, formset=forms.BaseGenreFavsFormSet)
+	post_dict = request.POST.dict()
+	#post_dict.update({'genre-TOTAL-FORMS': form_ct, 'genre-MAX_NUM_FORMS': '', 'genre-INITIAL_FORMS': '6'})
+	#formset = GenreFavFormset(initial=post_dict, prefix='genre')
+	#print(formset)
+	print(post_dict)
+	#formset = GenreFavFormset(request.POST)
+
+	#delete_list = request.POST.getlist('gl_delete')
+	for key in post_dict.keys():
+		if 'gl_delete' in key:
+			num_pos = key.find('genre-') + 6
+			id_num = key[num_pos]
+			gl_id = post_dict['genre-' + id_num + '-gl_id']
+			models.Genre_Likes.objects.get(pk=gl_id).delete()
+			
+	for key in post_dict.keys():
+		if 'genre_rating' in key:
+			num_pos = key.find('genre-') + 6
+			id_num = key[num_pos]
+			rating = post_dict['genre-' + id_num + '-genre_rating']
+			gl_id = post_dict['genre-' + id_num + '-gl_id']
+			
+			
+
+	'''if formset.is_valid():
+		gl_entry = form.cleaned_data['gl_id']
+		entry_delete = form.cleaned_data['gl_delete']
+		rating = form.cleaned_data['genre_rating']
+		print("Success")
+		return'''
+	'''else:
+		#for form in formset:
+			#print(form.as_table())
+		print("!!!")
+		for form in formset:
+			print(form)
+			print(form.is_valid())
+		print("Not valid")
+		return'''
+
+# --- End Favorite Genres ---
+
 
 def get_search_query(s):
 	query_str = '''
@@ -270,3 +298,35 @@ def album_info(request, **kwargs):
 		masterList.append(tempDict)
 		tempDict = {}
 	return render(request, 'album_info.html',{'masterList':masterList})
+
+
+# --- Helper Functions --- 
+
+def to_string(x):
+	'''Function for converting data into string form so that it can be rendered properly'''
+	a = []
+	for y in x:
+		#print(type(y),y)
+		if type(y) is datetime.datetime:
+			a.append(str(y))
+		elif type(y) is decimal.Decimal:
+			a.append(str(y))
+		elif type(y) is float:
+			a.append(str(y))
+		else:
+			a.append(y)
+	return a
+	
+def make_masterList(transactions, keys):
+	countLst = range(len(keys))
+	tempDict = {}
+	masterList = []
+	for tup in transactions:
+		for i in countLst:
+			if keys[i] == "gl_delete":
+				tempDict[keys[i]] = False
+			else:
+				tempDict[keys[i]] = tup[i]
+		masterList.append(tempDict)
+		tempDict = {}
+	return masterList

@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %}Favorite Genres{% endblock title %}
+
 
 {% block content %}
 
@@ -22,41 +25,58 @@
 	</div>
   </div>
   
-  {% for trans in masterList %}
+  <form action="/favorites/genres" method="post" id="favGenres_form" class="form-horizontal">
+	{% csrf_token %}
+  
+   {{ formset.management_form }}
+  
+  {% for trans, form in data %}
+  
+  <!-- <input type="hidden" name="genre-{{ forloop.counter|add:'-1' }}-gl_id" value="{{ trans.gl_id }}" id="id_genre-{{ forloop.counter|add:'-1' }}-gl_id"> -->
+  
   <div class="row">
     <div class="col-sm-2">
 	  <h5>{{ trans.genre_id }}</h5>
+	  {{ form.gl_id }}
+	  {{ form.genre_id }}
 	</div>
+	
+	
 	<div class="col-sm-6">
-	  <h5>{{ trans.label }}</h5>
+	  <h5>{{ trans.genre_label }}</h5>
+	  {{ form.genre_label }}
 	</div>
 	<div class="col-sm-2 text-center">
-		<div class="form-check">
-		<input type="checkbox" class="form-check-input" id="exampleCheck{{ trans.genre_id }}">
-		</div>
+		<!-- <div class="form-check">
+		  <input type="checkbox" class="form-check-input" id="exampleCheck">
+		</div> -->
+		{{ form.gl_delete }}
 	</div>
 	<div class="col-sm-2 text-right">
 		
-		
-		<div class="dropdown">
-		<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		{{ trans.rating }}
-		</button>
-		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-			
-			{% with ''|center:10 as range %}
-			{% for _ in range %}
-				<a class="dropdown-item">{{ forloop.counter }}</a>
-			{% endfor %}
-			{% endwith %}
-		</div>
-		</div>
+		{{ form.genre_rating }}
+		<!-- <input class="form-control" type="number" name="genre-{{ forloop.counter }}-genre_rating" value="{{ trans.genre_rating }}" id="id_genre-{{ forloop.counter }}-genre_rating"> -->
+		<!-- <input class="form-control" type="number" name="gl_rating" value="{{ trans.genre_rating }}"> -->
+
 
 	</div>
 	<br/>
   </div>
   {% endfor %}
+ 
+  	<div class="form-group row">
+		<div class="col-sm-3 center">
+			<input class="btn btn-primary" type="submit" value="Submit">
+		</div>
+	</div>
+</form>
 	
 </div>
+
+
 	
+{% endblock %}
+
+{% block jquery_content %}
+  <script src="{% static 'tunesApp/change_button.js' %}"></script>
 {% endblock %}
