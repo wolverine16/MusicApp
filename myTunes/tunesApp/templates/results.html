@@ -21,13 +21,13 @@
 		<tr>
 			<td>
 				<label class="label">
-					<a href="favorites/songs/{{ trans.song_id }}">{{ trans.title }}</a>
+					<a href="/favorites/songs/{{ trans.song_id }}">{{ trans.title }}</a>
 				</label>
 			</td>
 			<td>
 				<label class="label">
 					{% if trans.artist_name != '-' %}
-						<a href="favorites/artists/{{ trans.artist_id }}">{{ trans.artist_name }}</a>
+						<a href="/favorites/artists/{{ trans.artist_id }}">{{ trans.artist_name }}</a>
 					{% else %}
 						{{ trans.artist_name }}
 					{% endif %}
@@ -36,7 +36,7 @@
 			<td>
 				<label class="label">
 					{% if trans.album_name != '-' %}
-						<a href="album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
+						<a href="/album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
 					{% else %}
 						{{ trans.album_name }}
 					{% endif %}
@@ -45,7 +45,7 @@
 			<td>
 				<label class="label">
 					{% if trans.label != '-' %}
-						<a href="favorites/genres/{{ trans.genre_id }}">{{ trans.label }}</a>
+						<a href="/favorites/genres/{{ trans.genre_id }}">{{ trans.label }}</a>
 					{% else %}
 						{{ trans.label }}
 					{% endif %}

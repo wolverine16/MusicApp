@@ -296,7 +296,15 @@ def search(request):
 
 			#srch_formset = SearchResultsFormset(initial=masterList)
 			#context = {'search_formset' : srch_formset}
-			return render(request, 'results.html', {'masterList':masterList}) 
+
+			recent_searches = Search.objects.filter(user_id=loggedInUser).order_by('-search_inst')[:5]
+
+			if okayToSave(song, artist, genre, album):
+				srch_to_save = Search(user_id=loggedInUser,song=song,artist=artist,genre=genre,album=album)
+				srch_to_save.save()
+
+
+			return render(request, 'results.html', {'masterList':masterList, 'searches': recent_searches}) 
 	else:
 		form = SearchForm()
 		return render(request, 'search.html')
@@ -392,3 +400,11 @@ def createDict(request, query, keys):
 	# corresponding numeric value for each key to be used to populate dictionary
 	masterList = make_masterList(transactions, keys)
 	return masterList
+
+def okayToSave(song=None,artist=None,album=None,genre=None):
+
+	for one_val in [song, artist, album, genre]:
+		if (one_val is not None) and (one_val != ''):
+			return True
+
+	return False
