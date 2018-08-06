@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.db import connection
 from django.forms import formset_factory
 from .forms import SearchForm, SearchResults
-from tunesApp.models import Song, Song_Likes
+from tunesApp.models import *
 
 from . import forms
 from . import models
@@ -25,7 +25,6 @@ def favorites(request):
 def favSongs(request,song_id=''):
 	"""Favorite songs for the user."""
 
-	print(song_id)
 	if song_id != '':
 		loggedInUser = request.user
 		one_sg = Song.objects.get(pk=song_id)
@@ -60,9 +59,15 @@ def favSongs(request,song_id=''):
 	
 # --- Favorite Artists Handling ---
 
-def favArtists(request):
+def favArtists(request,artist_id=''):
 	"""Favorite artists for the user."""
 	"""Favorite songs for the user."""
+	
+	if artist_id != '':
+		loggedInUser = request.user
+		one_artist = Artist.objects.get(pk=artist_id)
+		one_artist_likes = Artist_Likes(artist_id=one_artist,user_id=loggedInUser,rating=0.0)
+		one_artist_likes.save()
 
 	query = '''
 	SELECT a.artist_id, a.artist_name, al.rating, al.id, 'False'
@@ -111,8 +116,14 @@ def editFavArtists(request, initialDict):
 	
 # --- Favorite Genres Handling ---
 
-def favGenres(request):
+def favGenres(request,genre_id=0):
 	"""Favorite songs for the user."""
+
+	if genre_id != 0:
+		loggedInUser = request.user
+		one_genre = Genre.objects.get(pk=genre_id)
+		one_genre_likes = Genre_Likes(genre_id=one_genre,user_id=loggedInUser,rating=0.0)
+		one_genre_likes.save()
 
 	query = '''
 	SELECT g.genre_id, g.label, gl.rating, gl.id, 'False'
