@@ -27,9 +27,18 @@ def favSongs(request):
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, 
 	s.tempo, s.danceability, s.time_signature, s.year, s.writer, 
-	s.loudness, sl.count, sl.rating, sl.id
-	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s
+	s.loudness, sl.count, sl.rating, sl.id,al.album_name, 
+	art.artist_name, g.label
+	FROM auth_user u, tunesapp_song_likes sl, tunesapp_song s, 
+	tunesapp_song_song_albums sal LEFT OUTER JOIN tunesapp_albums al
+	ON sal.album_id = al.album_id, 
+	tunesapp_song_song_artists sart, LEFT OUTER JOIN tunesapp_artists art
+	on sart.artist_id = art.artist_id,
+	tunesapp_song_song_genres sg LEFT OUTER JOIN tunesapp_genre g
+	on sg.genre_id = g.genre_id
 	WHERE u.id = sl.user_id_id and sl.song_id_id = s.song_id and u.username = %s
+	and sl.song_id_id = sal.song_id and sl.song_id_id = sart.song_id 
+	and sl.song_id_id = sg.song_id
 	ORDER BY sl.rating DESC;
 	'''
 	cursor.execute(query,[loggedInUser.username])
@@ -129,50 +138,81 @@ def get_search_query(s):
 
 def search(request):
 	if request.method == 'POST':
-		SearchResultsFormset = formset_factory(SearchResults)
-		if (form.is_valid()):
-			song = "\'" + form.cleaned_data['song_name'] + "\'"
-			artist = "\'" + form.cleaned_data['artist_name'] + "\'"
-			genre = "\'" + form.cleaned_data['genre_name'] + "\'"
-			album = "\'" + form.cleaned_data['album_name'] + "\'"
-			strt_yr =  form.cleaned_data['strt_yr'] 
-			end_yr =  form.cleaned_data['end_yr'] 
-			#run query
-			query = get_search_query(song, artist, genre, album, strt_yr, end_yr)
+		form = SearchForm(request.POST)
+		if (form.is_valid() and form.has_changed()):
+			song = form.cleaned_data['song_name'] 
+			artist = form.cleaned_data['artist_name'] 
+			genre = form.cleaned_data['genre_name'] 
+			album = form.cleaned_data['album_name'] 
+			strt_yr = form.cleaned_data['strt_yr'] 
+			end_yr = form.cleaned_data['end_yr'] 
+			
+			#dynamically construct and run query 
 			cursor = connection.cursor()					
+			
 			query = '''
 			SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, s.tempo, 
-			s.danceability, s.time_signature, s.year, s.writer, s.loudness,g.genre_id, 
-			g.label, art.artist_id, art.artist_name, a.album_id, a.album_name
-			FROM tunesApp_song s 
+			s.danceability, s.time_signature, s.year, s.writer, s.loudness,
+			g.genre_id, g.label, art.artist_id, art.artist_name, a.album_id, a.album_name
+			FROM tunesapp_song s 
 			LEFT OUTER JOIN tunesapp_song_song_genres bt ON s.song_id = bt.song_id
 			LEFT OUTER JOIN tunesapp_song_song_albums ai ON s.song_id = ai.song_id
 			LEFT OUTER JOIN tunesapp_song_song_artists pl ON s.song_id = pl.song_id
-			INNER JOIN tunesapp_genre g on bt.genre_id = g.genre_id
-			INNER JOIN tunesapp_album a on ai.album_id = a.album_id
-			INNER JOIN tunesapp_artist art on pl.artist_id = art.artist_id
-			WHERE s.title LIKE IF(songStr is NULL, '%', CONCAT('%',songStr,'%')) 
-			AND g.label LIKE IF(genreStr is NULL, '%', CONCAT('%',genreStr,'%')) 
-			AND art.artist_name LIKE IF(artistStr is NULL, '%', CONCAT('%',artistStr,'%')) 
-			AND a.album_name LIKE IF(albumStr IS NULL, '%', CONCAT('%',albumStr,'%'))
-			#S.year between year1Input and IF(year1Input = 0, 3000, IF(year2Input = 0, year1Input, year2Input))
-			GROUP BY s.song_id
-			LIMIT 15;
-			'''
+			LEFT OUTER JOIN tunesapp_genre g on bt.genre_id = g.genre_id
+			LEFT OUTER JOIN tunesapp_album a on ai.album_id = a.album_id
+			LEFT OUTER JOIN tunesapp_artist art on pl.artist_id = art.artist_id
+			WHERE '''
+			conditions = ''
+			queryTail = 'GROUP BY s.song_id LIMIT 15;'
+			queryFieldList = [song, genre, artist, album, strt_yr, end_yr]
+			nonNullIndices = []
+
+			#get all non-null indices. Order defiend by queryFIeldList
+			for num in range(queryFieldList):
+				if queryFieldList[num] != '':
+					nonNullIndices.append(num)
+
+			# append all but the last one. 
+			for num in range(len(nonNullIndices) - 1):
+				if nonNullIndices[num] == 0:
+					conditions += 's.title LIKE IF({0} is NULL, '%', CONCAT('%',{0},'%')) \nAND'.format("\'" + song + "\'")
+				elif nonNullIndices[num] == 1:
+					conditions += 'g.label LIKE IF({0} is NULL, '%', CONCAT('%',{0},'%')) \n AND'.format("\'" + genre + "\'")
+				elif nonNullIndices[num] == 2:
+					conditions += 'art.artist_name LIKE IF({0} is NULL, '%', CONCAT('%',{0},'%')) \n AND'.format("\'" + artist + "\'")
+				elif nonNullIndices[num] == 3:
+					conditions += 'a.album_name LIKE IF({0} IS NULL, '%', CONCAT('%',{0},'%')) \n AND'.format("\'" + album + "\'")
+				# elif nonNullIndices[num] == 4:
+
+
+			#handle last condition 
+			lastIndex = nonNullIndices[len(nonNullIndices) - 1]
+			if lastIndex == 0:
+				conditions += 's.title LIKE IF({0} is NULL, '%', CONCAT('%',{0},'%'))'.format("\'" + song + "\'")
+			elif lastIndex == 1:
+				conditions += 'g.label LIKE IF({0} is NULL, '%', CONCAT('%',{0},'%')) \n AND'.format("\'" + genre + "\'")
+			elif lastIndex == 2:
+				conditions += 'art.artist_name LIKE IF({0} is NULL, '%', CONCAT('%',{0},'%')) \n AND'.format("\'" + artist + "\'")
+			elif lastIndex == 3:
+				conditions += 'a.album_name LIKE IF({0} IS NULL, '%', CONCAT('%',{0},'%')) \n AND'.format("\'" + album + "\'")
+			# elif lastIndex == 4:
+				# do something
+			# elif lastIndex == 5:
+				# do something
+
+			# merge them all
+			query = query + conditions + queryTail
 			loggedInUser = request.user
-			# Replace variable names with user inputs from the client
-			query = query.replace('songStr',song)
-			query = query.replace('genreStr',genre)
-			query = query.replace('artistStr',artist)
-			query = query.replace('albumStr',album)
-			query = query.replace('year1Input',str(strt_yr))
-			query = query.replace('year2Input',str(end_yr))
+
 			print(query)
 			cursor.execute(query)
 			transactions = [to_string(x) for x in cursor.fetchall()]
 			keys = ['song_id', 'title', 'song_key','duration','energy','tempo',
-			'danceability','time_signature','year','writer','loudness', 'genre_id,',
+			'danceability','time_signature','year','writer','loudness', 'genre_id',
 			'label','artist_id','artist_name','album_id','album_name']
+
+			# !!!TO DO: SAVE search result information into search model!!!
+
 			# corresponding numeric value for each key to be used to populate dictionary
 			countLst = range(len(keys))
 			tempDict = {}
