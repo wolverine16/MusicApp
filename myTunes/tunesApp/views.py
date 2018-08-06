@@ -302,7 +302,7 @@ def album_info(request, **kwargs):
 	album_id = 0; #UPDATE THIS WITH PARSED OUT FIELD FROM KWARGS
 	query = '''
 	SELECT s.title,a.album_name,ai.album_id
-	FROM Album a, Appears_in ai, Song s
+	FROM tunesapp_album a, tunesapp_song_song_albums ai, tunesapp_song s
 	WHERE a.album_id = ai.album_id and ai.song_id = s.song_id and a.album_id = %s;
 	'''
 	cursor.execute(query,[album_id])
