@@ -168,26 +168,26 @@ def search(request):
 			# append all but the last one. 
 			for num in range(len(nonNullIndices) - 1):
 				if nonNullIndices[num] == 0:
-					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \nAND '.format("\'" + song + "\'")
+					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \nAND '.format("\'" + song + "\'")
 				elif nonNullIndices[num] == 1:
-					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + genre + "\'")
+					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + genre + "\'")
 				elif nonNullIndices[num] == 2:
-					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + artist + "\'")
+					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + artist + "\'")
 				elif nonNullIndices[num] == 3:
-					conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + album + "\'")
+					conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + album + "\'")
 				# elif nonNullIndices[num] == 4:
 
 
 			#handle last condition 
 			lastIndex = nonNullIndices[len(nonNullIndices) - 1]
 			if lastIndex == 0:
-				conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\'))'.format("\'" + song + "\'")
+				conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + song + "\'")
 			elif lastIndex == 1:
-				conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\'))'.format("\'" + genre + "\'")
+				conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + genre + "\'")
 			elif lastIndex == 2:
-				conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\'))'.format("\'" + artist + "\'")
+				conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + artist + "\'")
 			elif lastIndex == 3:
-				conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT(\'%\',{0},\'%\'))'.format("\'" + album + "\'")
+				conditions += 'a.album_name LIKE IF({0} IS NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + album + "\'")
 			# elif lastIndex == 4:
 				# do something
 			# elif lastIndex == 5:
