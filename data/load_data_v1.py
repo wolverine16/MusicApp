@@ -7,6 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "myTunes.settings")
 from django.core.management import execute_from_command_line
 
 #sys.path.append(os.path.join(BASE_DIR, 'myTunes'))
+
 sys.path.append("D:\\Dropbox\\Personal Files\\Assignments\\CS 564 - Database Management\\Project\\MusicApp\\myTunes")
 
 django.setup()

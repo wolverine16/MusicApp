@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mytunesdb',
         'USER': 'root',
-        'PASSWORD': 'Admin:123', 
+        'PASSWORD': 'Nrdealsteal1', 
         'HOST': '127.0.0.1',
         'PORT': 3306,
     }

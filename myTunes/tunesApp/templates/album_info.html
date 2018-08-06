@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<p>Additional album information</p>
-	{{trans.album_name}}
+<p>Songs in album: 
+{% for trans in masterList|slice:":1" %}
+'{{trans.album_name}}'
+{% endfor %}
+<p/>
 	{% for trans in masterList %}
-		<p>
+		<p>	
 			{{trans.title}}
 			<br />	
 		</p>

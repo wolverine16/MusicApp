@@ -214,9 +214,17 @@ def search(request):
 			artist = form.cleaned_data['artist_name'] 
 			genre = form.cleaned_data['genre_name'] 
 			album = form.cleaned_data['album_name'] 
-			strt_yr = form.cleaned_data['strt_yr'] 
-			end_yr = form.cleaned_data['end_yr'] 
-			
+			if '\'' in song:
+				song = song.replace('\'','\\\'')
+			if '\'' in artist:
+				artist = artist.replace('\'','\\\'')
+			if '\'' in genre:
+				genre = genre.replace('\'','\\\'')
+			if '\'' in album:
+				album = album.replace('\'','\\\'')
+
+
+
 			#dynamically construct and run query 
 			cursor = connection.cursor()					
 			
@@ -243,7 +251,7 @@ def search(request):
 					nonNullIndices.append(num)
 
 			print(range(len(nonNullIndices)))
-			# append all but the last one. 
+			# append all but the last one 
 			for num in range(len(nonNullIndices) - 1):
 				if nonNullIndices[num] == 0:
 					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \nAND '.format("\'" + song + "\'")
@@ -337,7 +345,7 @@ def results(request):
 def album_info(request, **kwargs):
 	cursor = connection.cursor()
 	print(kwargs)
-	album_id = 0; #UPDATE THIS WITH PARSED OUT FIELD FROM KWARGS
+	album_id = kwargs['album_id']; 
 	query = '''
 	SELECT s.title,a.album_name,ai.album_id
 	FROM tunesapp_album a, tunesapp_song_song_albums ai, tunesapp_song s
