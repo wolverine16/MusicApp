@@ -9,41 +9,56 @@
 <h1>Search Results</h1>
 </div>
 <div class="row">
-<div class="col-sm-7">
-<form action="/search/results" method="post" class="form-horizontal">
-	{% csrf_token %}
-	{{ search_formset.management_form }}
-	<table class="table-striped">
+	<table class="table table-striped">
 		<tr>
 			<th>Song</th>
-			<th>Add to Favorites</th>
+			<th>Artist</th>
+			<th>Album</th>
+			<th>Genre</th>
+			<th>Year</th>
 		</tr>
-	{% for srch_rslt in search_formset %}
+	{% for trans in masterList %}
 		<tr>
 			<td>
-				<label class="col-sm-2 control-label">
-					{{ srch_rslt.title }}
-					{{ srch_rslt.artist_name }}
-					{{ srch_rslt.label }}
-					{{ srch_rslt.album_name }}
-					{{ srch_rslt.year }}
+				<label class="label">
+					<a href="favorites/songs/{{ trans.song_id }}">{{ trans.title }}</a>
 				</label>
-				{{ srch_rslt.song_id }}
-				{{ srch_rslt.genre_id }}
-				{{ srch_rslt.artist_id }}
-				{{ srch_rslt.album_id }}
-
 			</td>
 			<td>
-				<input type="checkbox" name="add_to_fav" checked="{{ srch_rslt.add_to_fav }}" >
+				<label class="label">
+					{% if trans.artist_name != '-' %}
+						<a href="favorites/artists/{{ trans.artist_id }}">{{ trans.artist_name }}</a>
+					{% else %}
+						{{ trans.artist_name }}
+					{% endif %}
+				</label>
+			</td>
+			<td>
+				<label class="label">
+					{% if trans.album_name != '-' %}
+						<a href="album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
+					{% else %}
+						{{ trans.album_name }}
+					{% endif %}
+				</label>
+			</td>
+			<td>
+				<label class="label">
+					{% if trans.label != '-' %}
+						<a href="favorites/genres/{{ trans.genre_id }}">{{ trans.label }}</a>
+					{% else %}
+						{{ trans.label }}
+					{% endif %}
+				</label>
+			</td>
+			<td>
+				<label class="label">
+					{{ trans.year }}
+				</label>
 			</td>
 		</tr>
 	{% endfor %}
 	</table>
-</form>
-</div>
-</div>
-</div>
 </div>
 </div>
 

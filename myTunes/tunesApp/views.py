@@ -188,7 +188,7 @@ def get_search_query(s):
 	'''
 
 def search(request):
-	SearchResultsFormset = formset_factory(SearchResults)
+	#SearchResultsFormset = formset_factory(SearchResults)
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
 		if (form.is_valid() and form.has_changed()):
@@ -267,13 +267,18 @@ def search(request):
 			masterList = []
 			for tup in transactions:
 				for i in countLst:
-					tempDict[keys[i]] = tup[i]
+					if tup[i] is not None:
+						tempDict[keys[i]] = tup[i]
+					else:
+						tempDict[keys[i]] = '-'
+					if keys[i] == 'year' and (int(tempDict[keys[i]]) == 0):
+						tempDict[keys[i]] = '-'
 				masterList.append(tempDict)
 				tempDict = {}
-
-			srch_formset = SearchResultsFormset(initial=masterList)
-			context = {'search_formset' : srch_formset}
-			return render(request, 'results.html', context) 
+				
+			#srch_formset = SearchResultsFormset(initial=masterList)
+			#context = {'search_formset' : srch_formset}
+			return render(request, 'results.html', {'masterList':masterList}) 
 	else:
 		form = SearchForm()
 		return render(request, 'search.html')
