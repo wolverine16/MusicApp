@@ -1,5 +1,75 @@
 {% extends "base.html" %}
+
+{% load static %}
+
+{% block custom_style %}
+	<!-- Custom styles for this template -->
+	<link href="{% static 'tunesApp/fav_pages.css' %}" rel="stylesheet">
+{% endblock custom_style %}
+
+{% block title %}Favorite Artists{% endblock title %}
+
 {% block content %}
+
+
+<div class="container-fluid"></div>
+
+  <h1 center>Favorite Artists</h1>
+  <div class="row">
+	<div class="col-sm-1">
+	</div>
+	<div class="col-sm-6 text-center">
+	  <h4>Artist Name</h4>
+	</div>
+	<div class="col-sm-2">
+	  <h4>Delete?</h4>
+	</div>
+	<div class="col-sm-2 text-right">
+	  <h4>Rating</h4>
+	</div>
+  </div>
+  
+  <form action="/favorites/artists" method="post" id="favArtists_form" class="form-horizontal">
+	{% csrf_token %}
+  
+   {{ formset.management_form }}
+  
+  {% for trans, form in data %}
+    
+  <div class="row">
+	<div class="col-sm-1">
+		{{ form.al_id }}
+		{{ form.artist_id }}
+	</div>
+	<div class="col-sm-6">
+	  <h5>{{ trans.artist_name }}</h5>
+
+		{{ form.artist_name }}
+	</div>
+	<div class="col-sm-2 text-center">
+		{{ form.al_delete }}
+	</div>
+	<div class="col-sm-2 text-right">
+		
+		{{ form.artist_rating }}
+
+	</div>
+	<br/>
+  </div>
+  {% endfor %}
+ 
+  	<div class="form-group row">
+		<div class="col-sm-2"></div>
+		<div class="col-sm-3 center">
+			<input class="btn btn-primary" type="submit" value="Submit">
+		</div>
+	</div>
+</form>
+	
+</div>
+
+
+<!--
 <p>Hello, favorite artists!</p>
 	{% for trans in masterList %}
 		<p>
@@ -8,5 +78,5 @@
 			{{trans.rating}}
 			<br />
 		</p>
-	{% endfor %}
+	{% endfor %} -->
 {% endblock %}

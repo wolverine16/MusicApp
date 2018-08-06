@@ -1,5 +1,20 @@
 {% extends "base.html" %}
+
+{% load static %}
+
+{% block custom_style %}
+	<!-- Custom styles for this template -->
+	<link href="{% static 'tunesApp/fav_pages.css' %}" rel="stylesheet">
+{% endblock custom_style %}
+
+{% block title %}Favorite Songs{% endblock title %}
+
 {% block content %}
+
+
+
+
+
 <p>Hello, favorite songs!</p>
 	{% for trans in masterList %}
 		<p>
