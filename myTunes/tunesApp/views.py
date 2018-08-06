@@ -227,7 +227,7 @@ def search(request):
 			context = {'search_formset' : srch_formset}
 			return render(request, 'results.html', context) 
 	else:
-		form = SearchForm()
+		#form = SearchForm()
 		return render(request, 'search.html')
 
 
