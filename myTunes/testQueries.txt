@@ -1,0 +1,14 @@
+SELECT s.song_id, s.title,s.year, 
+s.writer, g.genre_id, g.label, 
+art.artist_id, art.artist_name, 
+a.album_id, a.album_name 
+FROM tunesapp_song s 
+LEFT OUTER JOIN tunesapp_song_song_genres bt ON s.song_id = bt.song_id
+LEFT OUTER JOIN tunesapp_song_song_albums ai ON s.song_id = ai.song_id
+LEFT OUTER JOIN tunesapp_song_song_artists pl ON s.song_id = pl.song_id
+LEFT OUTER JOIN tunesapp_genre g on bt.genre_id = g.genre_id
+LEFT OUTER JOIN tunesapp_album a on ai.album_id = a.album_id
+LEFT OUTER JOIN tunesapp_artist art on pl.artist_id = art.artist_id
+WHERE s.title LIKE IF('love' is NULL, '%', CONCAT('%','love','%')) 
+AND art.artist_name LIKE IF('c' is NULL, '%', CONCAT('%','c','%')) 
+GROUP BY s.song_id;
