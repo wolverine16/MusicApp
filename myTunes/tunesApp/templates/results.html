@@ -10,11 +10,28 @@
 </div>
 <div class="row">
 <div class="col-sm-7">
-<form action="/search/results" method="post" id="srch_frm" class="form-horizontal">
+<form action="/search/results" method="post" class="form-horizontal">
 	{% csrf_token %}
-
+	{{ search_formset.management_form }}
 	<table class="table-striped">
-	{{ form }}
+		<tr>
+			<th>Song</th>
+			<th>Add to Favorites</th>
+		</tr>
+	{% for srch_rslt in search_formset %}
+		<tr>
+			<td>
+				{{ srch_rslt.title }}
+				{{ srch_rslt.artist_name }}
+				{{ srch_rslt.label }}
+				{{ srch_rslt.album_name }}
+				{{ srch_rslt.year }}
+			</td>
+			<td>
+				<input type="checkbox" name="add_to_fav" checked="{{ srch_rslt.add_to_fav }}" >
+			</td>
+		</tr>
+	{% endfor %}
 	</table>
 </form>
 </div>

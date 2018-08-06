@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.db import connection
-from .forms import SearchForm
+from django.forms import formset_factory
+from .forms import SearchForm, SearchResults
+from tunesApp.models import Song, Song_Likes
 
 import datetime
 import decimal
@@ -127,7 +129,7 @@ def get_search_query(s):
 
 def search(request):
 	if request.method == 'POST':
-		form = SearchForm(request.POST)
+		SearchResultsFormset = formset_factory(SearchResults)
 		if (form.is_valid()):
 			song = "\'" + form.cleaned_data['song_name'] + "\'"
 			artist = "\'" + form.cleaned_data['artist_name'] + "\'"
@@ -141,7 +143,7 @@ def search(request):
 			query = '''
 			SELECT s.song_id, s.title, s.song_key, s.duration, s.energy, s.tempo, 
 			s.danceability, s.time_signature, s.year, s.writer, s.loudness,g.genre_id, 
-			g.label, art.artist_id, art.artist_name, a.album_id, a.album_name, s.year
+			g.label, art.artist_id, art.artist_name, a.album_id, a.album_name
 			FROM tunesApp_song s 
 			LEFT OUTER JOIN tunesapp_song_song_genres bt ON s.song_id = bt.song_id
 			LEFT OUTER JOIN tunesapp_song_song_albums ai ON s.song_id = ai.song_id
@@ -149,7 +151,6 @@ def search(request):
 			INNER JOIN tunesapp_genre g on bt.genre_id = g.genre_id
 			INNER JOIN tunesapp_album a on ai.album_id = a.album_id
 			INNER JOIN tunesapp_artist art on pl.artist_id = art.artist_id
-			tunesapp_genre g, tunesapp_album a, tunesapp_artist art
 			WHERE s.title LIKE IF(songStr is NULL, '%', CONCAT('%',songStr,'%')) 
 			AND g.label LIKE IF(genreStr is NULL, '%', CONCAT('%',genreStr,'%')) 
 			AND art.artist_name LIKE IF(artistStr is NULL, '%', CONCAT('%',artistStr,'%')) 
@@ -171,7 +172,7 @@ def search(request):
 			transactions = [to_string(x) for x in cursor.fetchall()]
 			keys = ['song_id', 'title', 'song_key','duration','energy','tempo',
 			'danceability','time_signature','year','writer','loudness', 'genre_id,',
-			'label','artist_id','artist_name','album_id','album_name','year']
+			'label','artist_id','artist_name','album_id','album_name']
 			# corresponding numeric value for each key to be used to populate dictionary
 			countLst = range(len(keys))
 			tempDict = {}
@@ -181,10 +182,37 @@ def search(request):
 					tempDict[keys[i]] = tup[i]
 				masterList.append(tempDict)
 				tempDict = {}
-			return render(request, 'results.html', {'masterList':masterList}) 
+
+			srch_formset = SearchResultsFormset(masterList)
+			context = {'search_formset' : srch_formset}
+			return render(request, 'results.html', context) 
 	else:
 		form = SearchForm()
 		return render(request, 'search.html')
+
+
+def results(request):
+	
+	user = request.user
+
+	SearchResultsFormset = formset_factory(SearchResults)
+
+	if request.method == POST:
+		srch_results = SearchResultsFormset(request.POST)	
+
+		if srch_results.is_valid():
+			for one_line in srch_results:
+				song_id = one_line.cleaned_data.get('song_id')
+				is_add2fav = one_line.cleaned_data.get('add_to_fav')
+				if is_add2fav:
+					one_sg = Song.objects.get(pk=song_id)
+					sg_likes = Song_Likes(song_id=one_sg, user_id=user)
+					sg_likes.save()
+
+		return HttpResponseRedirect('/favorites/songs')
+	else:
+		form = SearchResults()
+		return render(request, 'results.html')
 
 #NEED TO FINISH THIS BY PRINTING/PARSING OUT KWARGS
 def album_info(request, **kwargs):
