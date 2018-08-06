@@ -122,8 +122,10 @@ def favGenres(request,genre_id=0):
 	if genre_id != 0:
 		loggedInUser = request.user
 		one_genre = Genre.objects.get(pk=genre_id)
-		one_genre_likes = Genre_Likes(genre_id=one_genre,user_id=loggedInUser,rating=0.0)
-		one_genre_likes.save()
+		one_genre_likes = Genre_Likes.objects.get(user_id=loggedInUser,genre_id=one_genre)
+		if not one_genre_likes:
+			new_genre_likes = Genre_Likes(genre_id=one_genre,user_id=loggedInUser,rating=0.0)
+			new_genre_likes.save()
 
 	query = '''
 	SELECT g.genre_id, g.label, gl.rating, gl.id, 'False'
@@ -312,7 +314,10 @@ def search(request):
 				srch_to_save.save()
 
 
-			return render(request, 'results.html', {'masterList':masterList, 'searches': recent_searches}) 
+			return render(request, 'results.html', {'masterList':masterList, 'searches': recent_searches})
+
+		return render(request, 'search.html')
+
 	else:
 		form = SearchForm()
 		return render(request, 'search.html')
