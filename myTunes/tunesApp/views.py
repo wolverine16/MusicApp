@@ -22,8 +22,15 @@ def favorites(request):
 	"""Favorites landing page."""
 	return render(request, 'favorites_general.html')
 	
-def favSongs(request):
+def favSongs(request,song_id=''):
 	"""Favorite songs for the user."""
+
+	print(song_id)
+	if song_id != '':
+		loggedInUser = request.user
+		one_sg = Song.objects.get(pk=song_id)
+		sg_likes = Song_Likes(song_id=one_sg, user_id=loggedInUser, count=1, rating=0.0)
+		sg_likes.save()
 
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy,
@@ -275,7 +282,7 @@ def search(request):
 						tempDict[keys[i]] = '-'
 				masterList.append(tempDict)
 				tempDict = {}
-				
+
 			#srch_formset = SearchResultsFormset(initial=masterList)
 			#context = {'search_formset' : srch_formset}
 			return render(request, 'results.html', {'masterList':masterList}) 
