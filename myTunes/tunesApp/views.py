@@ -137,6 +137,8 @@ def get_search_query(s):
 	'''
 
 def search(request):
+
+	SearchResultsFormset = formset_factory(SearchResults)
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
 		if (form.is_valid() and form.has_changed()):
