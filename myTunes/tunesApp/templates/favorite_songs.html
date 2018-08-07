@@ -7,32 +7,72 @@
 	<link href="{% static 'tunesApp/fav_pages.css' %}" rel="stylesheet">
 {% endblock custom_style %}
 
-{% block title %}Favorite Songs{% endblock title %}
+{% block title %}Favorite Song{% endblock title %}
 
 {% block content %}
 
+<div class="container-fluid"></div>
 
+  <h1>Favorite Songs</h1>
+  <div class="row">
+	<div class="col-sm-8 text-center">
+	  <h4>Songs</h4>
+	</div>
+	<div class="col-sm-2 text-center"><h4>Delete?</h4></div>
+	<div class="col-sm-1 text-right">
+	  <h4>Rating</h4>
+	</div>
+  </div>
+  
+  <form action="/favorites/songs" method="post" id="favSongs_form" class="form-horizontal">
+	{% csrf_token %}
+  
+   {{ formset.management_form }}
+  
+  {% for trans, form in data %}
+    
+  <div class="row">
 
+	<div class="col-sm-8">
+	  <h5>{{ trans.song_title }}
+	  {% if trans.artist_name != '-' %} by {{ trans.artist_name }}
+	  {% else %} -- Artist Unknown
+	  {% endif %}</h5>
+	  
+	  <h6>{% if trans.album_name != '-' %}<a href="album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
+	  {% else %}Unknown Album{% endif %}
+	  &emsp; {% if trans.genre_label != '-' %}{{ trans.genre_label }}
+	  {% else %}Unknown Genre{% endif %}
+	  {% if trans.year != '-' %}&emsp; {{ trans.year }}
+	  {% endif %}
+	  </h6>
+	  <h6>
+	  Duration: {{ trans.duration }}&emsp;Energy: {{ trans.energy }}&emsp;Loudness: {{ trans.loudness }}&emsp;Danceability: {{ trans.danceability }}
+	  </h6>
+	  
+	  
+	  {{ form.song_title }}
+	  {{ form.sl_id }}
+	</div>
 
+	<div class="col-sm-2 text-center">{{ form.sl_delete }}</div>
+		
+	<div class="col-sm-1 text-right">
+		
+		{{ form.song_rating }}
 
-<p>Hello, favorite songs!</p>
-	{% for trans in masterList %}
-		<p>
-			{{trans.song_id}}
-			{{trans.title}}
-			{{trans.song_key}}
-			{{trans.duration}}
-			{{trans.energy}}
-			{{trans.tempo}}
-			{{trans.danceability}}
-			{{trans.time_signature}}
-			{{trans.year}}
-			{{trans.writer}}
-			{{trans.loudness}}
-			{{trans.count}}
-			{{trans.rating}}
-			<a href="/album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
-			<br/>
-		</p>
-	{% endfor %}
+	</div>
+  </div>
+  </br>
+  {% endfor %}
+ 
+  	<div class="form-group row">
+		<div class="col-sm-3 center">
+			<input class="btn btn-primary" type="submit" value="Submit">
+		</div>
+	</div>
+</form>
+	
+</div>
+
 {% endblock %}
