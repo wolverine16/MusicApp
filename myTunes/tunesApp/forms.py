@@ -7,8 +7,6 @@ class SearchForm(forms.Form):
 	artist_name = forms.CharField(label = 'artist', max_length = 150, required = False)
 	genre_name = forms.CharField(label = 'genre', max_length = 150, required = False)
 	album_name = forms.CharField(label='album', max_length = 150, required = False)
-	strt_yr = forms.IntegerField(label = 'strt_year', required = False)
-	end_yr = forms.IntegerField(label = 'end_year', required = False)
 
 
 class SearchResults(forms.Form):

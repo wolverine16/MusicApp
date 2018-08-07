@@ -296,15 +296,16 @@ def get_search_query(s):
 	s.danceability, s.time_signature, s.year, s.writer, s.loudness
 	'''
 
-def search(request):
+def search(request,song_param='',artist_param='',genre_param='',album_param=''):
 	#SearchResultsFormset = formset_factory(SearchResults)
+
 	if request.method == 'POST':
 		form = SearchForm(request.POST)
 		if (form.is_valid() and form.has_changed()):
-			song = form.cleaned_data['song_name'] 
-			artist = form.cleaned_data['artist_name'] 
-			genre = form.cleaned_data['genre_name'] 
-			album = form.cleaned_data['album_name'] 
+			song = form.cleaned_data['song_name'].strip()
+			artist = form.cleaned_data['artist_name'].strip()
+			genre = form.cleaned_data['genre_name'].strip()
+			album = form.cleaned_data['album_name'].strip()
 			if '\'' in song:
 				song = song.replace('\'','\\\'')
 			if '\'' in artist:
@@ -402,15 +403,45 @@ def search(request):
 				srch_to_save = Search(user_id=loggedInUser,song=song,artist=artist,genre=genre,album=album)
 				srch_to_save.save()
 
+			disp_list = createLinks(recent_searches)
 
-
-			return render(request, 'results.html', {'masterList':masterList, 'searches': recent_searches})
+			return render(request, 'results.html', {'masterList':masterList, 'searches': recent_searches, 'disp_strs' : disp_list})
 
 		return render(request, 'search.html')
 
 	else:
-		form = SearchForm()
-		return render(request, 'search.html')
+
+		quick_searches = Search.objects.filter(user_id=request.user).order_by('-search_inst')[:5]
+		strs_list = createLinks(quick_searches)
+		
+		#print(quick_searches)
+		#print(strs_list)
+
+		quick_searches = zip(quick_searches, strs_list)
+
+		song_param = song_param.strip()
+		artist_param = artist_param.strip()
+		genre_param = genre_param.strip()
+		album_param = album_param.strip()
+
+		if song_param == '-':
+			song_param = ''
+
+		if artist_param == '-':
+			artist_param = ''
+
+		if genre_param == '-':
+			genre_param = ''
+
+		if album_param == '-':
+			album_param = ''
+
+
+		data = {'song_name' : song_param, 'artist_name' : artist_param, 'genre_name' : genre_param, 
+				'album_name' : album_param }
+
+		#form = SearchForm(data)
+		return render(request, 'search.html', {'data' : data, 'searches' : quick_searches})
 
 
 def results(request):
@@ -517,13 +548,22 @@ def okayToSave(song=None,artist=None,album=None,genre=None):
 	for one_val in [song, artist, album, genre]:
 		if (one_val is not None) and (one_val != ''):
 			return True
-
 	return False
 
 def createLinks(searches):
 	srch_list = []
 
 	for one_srch in searches:
+		one_recent_str = ''
+		if (one_srch.song is not None) and (one_srch.song != ''):
+			one_recent_str = one_recent_str + "Song:" + one_srch.song + " "
+		if (one_srch.artist is not None) and (one_srch.artist != ''):
+			one_recent_str = one_recent_str + "Artist:" + one_srch.artist + " "
+		if (one_srch.genre is not None) and (one_srch.genre != ''):
+			one_recent_str = one_recent_str + "Genre:" + one_srch.genre + " "
+		if (one_srch.album is not None) and (one_srch.album != ''):
+			one_recent_str = one_recent_str + "Album:" + one_srch.album
 
+		srch_list.append(one_recent_str)
 
 	return srch_list

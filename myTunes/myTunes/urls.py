@@ -34,6 +34,7 @@ urlpatterns = [
     path('favorites/genres', views.favGenres),
     path('favorites/genres/<int:genre_id>/', views.favGenres),
     path('search/', views.search),
+    path('search/<str:song_param>/<str:artist_param>/<str:genre_param>/<str:album_param>/',views.search),
     path('search/results', views.results),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),

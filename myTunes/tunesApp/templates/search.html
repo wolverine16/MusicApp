@@ -22,25 +22,25 @@
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="song">Song:</label>
 		<div class="col-sm-10">
-			<input class="form-control" type="text" name="song_name" placeholder="Song" value="">
+			<input class="form-control" type="text" name="song_name" placeholder="Song" value="{{ data.song_name }}">
 		</div>
 	</div> 
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="artist">Artist:</label>
 		<div class="col-sm-10">
-			<input class="form-control" type="text" name="artist_name" placeholder="Artist" value="">
+			<input class="form-control" type="text" name="artist_name" placeholder="Artist" value="{{ data.artist_name }}">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="genre">Genre:</label>
 		<div class="col-sm-10">
-			<input class="form-control" type="text" name="genre_name" placeholder="Genre" value="">
+			<input class="form-control" type="text" name="genre_name" placeholder="Genre" value="{{ data.genre_name }}">
 		</div>
 	</div>
 	<div class="form-group row">
 		<label class="col-sm-1 control-label" for="album">Album:</label>
 		<div class="col-sm-10">
-			<input class="form-control" type="text" name="album_name" placeholder="Album" value="">
+			<input class="form-control" type="text" name="album_name" placeholder="Album" value="{{ data.album_name }}">
 		</div>
 	</div>
 	<div class="form-group row">
@@ -50,9 +50,38 @@
 	</div>
 	</form>
 	</div>
+	
 	<div class="col-sm-12">
-		<h4>Recent Searches</h3>
+		<h5>Recent Searches</h3>
+		<div class="row">
+			{% for one_srch, one_recent_srch_str in searches %}
+				<div class="col-sm">
+					<a href="/search/
+					{% if one_srch.song == '' %}
+						{{ '-' }}
+					{% else %}
+						{{ one_srch.song }}
+					{% endif %}
+					/{% if one_srch.artist == '' %}
+						{{ '-' }}
+					{% else %}
+						{{ one_srch.artist }}
+					{% endif %}
+					/{% if one_srch.genre == '' %}
+						{{ '-' }}
+					{% else %}
+						{{ one_srch.genre }}
+					{% endif %}
+					/{% if one_srch.album == '' %}
+						{{ '-' }}
+					{% else %}
+						{{ one_srch.album }}
+					{% endif %}">{{ one_recent_srch_str }}</a>
+				</div>
+			{% endfor %}
+		</div>
 	</div>
+	
 </div>
 
 {% endblock content %}
