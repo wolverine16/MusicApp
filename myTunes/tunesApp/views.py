@@ -79,13 +79,19 @@ def favSongs(request, song_id=''):
 def editFavSongs(request, initialDict):
 	form_ct = len(initialDict)
 	post_dict = request.POST.dict()
+	
+	deleted_objs = []
 
 	for key in post_dict.keys():
 		if 'sl_delete' in key:
 			num_pos = key.find('song-') + len('song-')
 			id_num = key[num_pos]
 			sl_id = post_dict['song-' + id_num + '-sl_id']
-			models.Song_Likes.objects.get(pk=sl_id).delete()
+			try:
+				models.Song_Likes.objects.get(pk=sl_id).delete()
+			except Song_Likes.DoesNotExist:
+				pass
+			deleted_objs.append(sl_id)
 			
 	for key in post_dict.keys():
 		if 'song_rating' in key:
@@ -93,12 +99,13 @@ def editFavSongs(request, initialDict):
 			id_num = key[num_pos]
 			new_rating = post_dict['song-' + id_num + '-song_rating']
 			sl_id = post_dict['song-' + id_num + '-sl_id']
-			init_dict = initialDict[int(id_num)]
-			init_rating = init_dict['song_rating']
-			if int(new_rating) != int(init_rating):
-				inst = models.Song_Likes.objects.get(pk=sl_id)
-				inst.rating = new_rating
-				inst.save()
+			if sl_id not in deleted_objs:
+				init_dict = initialDict[int(id_num)]
+				init_rating = init_dict['song_rating']
+				if int(new_rating) != int(init_rating):
+					inst = models.Song_Likes.objects.get(pk=sl_id)
+					inst.rating = new_rating
+					inst.save()
 	
 # --- End Favorite Songs ---
 
@@ -148,13 +155,20 @@ def favArtists(request, artist_id=''):
 def editFavArtists(request, initialDict):
 	form_ct = len(initialDict)
 	post_dict = request.POST.dict()
+	
+	deleted_objs = []
 
 	for key in post_dict.keys():
 		if 'al_delete' in key:
 			num_pos = key.find('artist-') + len('artist-')
 			id_num = key[num_pos]
 			al_id = post_dict['artist-' + id_num + '-al_id']
-			models.Artist_Likes.objects.get(pk=al_id).delete()
+			try:
+				models.Artist_Likes.objects.get(pk=al_id).delete()
+			except Artist_Likes.DoesNotExist:
+				pass
+			deleted_objs.append(al_id)
+			
 			
 	for key in post_dict.keys():
 		if 'artist_rating' in key:
@@ -162,22 +176,23 @@ def editFavArtists(request, initialDict):
 			id_num = key[num_pos]
 			new_rating = post_dict['artist-' + id_num + '-artist_rating']
 			al_id = post_dict['artist-' + id_num + '-al_id']
-			init_dict = initialDict[int(id_num)]
-			init_rating = init_dict['artist_rating']
-			if int(new_rating) != int(init_rating):
-				inst = models.Artist_Likes.objects.get(pk=al_id)
-				inst.rating = new_rating
-				inst.save()
+			if al_id not in deleted_objs:
+				init_dict = initialDict[int(id_num)]
+				init_rating = init_dict['artist_rating']
+				if int(new_rating) != int(init_rating):
+					inst = models.Artist_Likes.objects.get(pk=al_id)
+					inst.rating = new_rating
+					inst.save()
 	
 # --- End Favorite Artists ---
 	
 	
 # --- Favorite Genres Handling ---
 
-def favGenres(request, genre_id=0):
+def favGenres(request, genre_id=''):
 	"""Favorite songs for the user."""
 
-	if genre_id != 0:
+	if genre_id != '':
 		loggedInUser = request.user
 		try:
 			one_genre = Genre.objects.get(genre_id=genre_id)
@@ -225,13 +240,19 @@ def editFavGenres(request, initialDict):
 	#print(post_dict)
 	#formset = GenreFavFormset(request.POST)
 
+	deleted_objs = []
+
 	#delete_list = request.POST.getlist('gl_delete')
 	for key in post_dict.keys():
 		if 'gl_delete' in key:
 			num_pos = key.find('genre-') + len('genre-')
 			id_num = key[num_pos]
 			gl_id = post_dict['genre-' + id_num + '-gl_id']
-			models.Genre_Likes.objects.get(pk=gl_id).delete()
+			try:
+				models.Genre_Likes.objects.get(pk=gl_id).delete()
+			except Genre_Likes.DoesNotExist:
+				pass
+			deleted_objs.append(gl_id)
 			
 	for key in post_dict.keys():
 		if 'genre_rating' in key:
@@ -239,13 +260,14 @@ def editFavGenres(request, initialDict):
 			id_num = key[num_pos]
 			new_rating = post_dict['genre-' + id_num + '-genre_rating']
 			gl_id = post_dict['genre-' + id_num + '-gl_id']
-			init_dict = initialDict[int(id_num)]
-			init_rating = init_dict['genre_rating']
-			if int(new_rating) != int(init_rating):
-				#print(str(gl_id) + ": " + str(new_rating))
-				inst = models.Genre_Likes.objects.get(pk=gl_id)
-				inst.rating = new_rating
-				inst.save()
+			if gl_id not in deleted_objs:
+				init_dict = initialDict[int(id_num)]
+				init_rating = init_dict['genre_rating']
+				if int(new_rating) != int(init_rating):
+					#print(str(gl_id) + ": " + str(new_rating))
+					inst = models.Genre_Likes.objects.get(pk=gl_id)
+					inst.rating = new_rating
+					inst.save()
 			
 			
 	# This doesn't work :'(
