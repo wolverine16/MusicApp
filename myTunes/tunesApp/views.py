@@ -28,7 +28,7 @@ def favorites(request):
 def favSongs(request, song_id=''):
 	"""Favorite songs for the user."""
 
-	if song_id != 0:
+	if song_id != '':
 		loggedInUser = request.user
 		try:
 			one_sg = Song.objects.get(pk=song_id)
@@ -110,7 +110,7 @@ def favArtists(request, artist_id=''):
 	"""Favorite songs for the user."""
 	
 
-	if artist_id != 0:
+	if artist_id != '':
 		loggedInUser = request.user
 		try:
 			one_artist = Artist.objects.get(artist_id=artist_id)
@@ -325,7 +325,7 @@ def search(request):
 				if nonNullIndices[num] == 0:
 					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \nAND '.format("\'" + song + "\'")
 				elif nonNullIndices[num] == 1:
-					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + genre + "\'")
+					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + genre + "\'")
 				elif nonNullIndices[num] == 2:
 					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + artist + "\'")
 				elif nonNullIndices[num] == 3:
@@ -337,7 +337,7 @@ def search(request):
 			if lastIndex == 0:
 				conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + song + "\'")
 			elif lastIndex == 1:
-				conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + genre + "\'")
+				conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\'))'.format("\'" + genre + "\'")
 			elif lastIndex == 2:
 				conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + artist + "\'")
 			elif lastIndex == 3:

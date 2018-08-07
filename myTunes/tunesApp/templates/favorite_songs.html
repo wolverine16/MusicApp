@@ -39,7 +39,7 @@
 	  {% else %} -- Artist Unknown
 	  {% endif %}</h5>
 	  
-	  <h6>{% if trans.album_name != '-' %}<a href="album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
+	  <h6>{% if trans.album_name != '-' %}<a href="/album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
 	  {% else %}Unknown Album{% endif %}
 	  &emsp; {% if trans.genre_label != '-' %}{{ trans.genre_label }}
 	  {% else %}Unknown Genre{% endif %}
