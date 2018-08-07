@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block custom_style %}
+	<!-- Custom styles for this template -->
+	<link href="{% static 'tunesApp/fav_pages.css' %}" rel="stylesheet">
+{% endblock custom_style %}
+
 {% block title %}Search MyTunes{% endblock title %}
 
 {% block content %}

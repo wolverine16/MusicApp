@@ -441,13 +441,13 @@ def album_info(request, **kwargs):
 	print(kwargs)
 	album_id = kwargs['album_id']; 
 	query = '''
-	SELECT s.title,a.album_name,ai.album_id
+	SELECT s.title, a.album_name, ai.album_id, s.song_id
 	FROM tunesapp_album a, tunesapp_song_song_albums ai, tunesapp_song s
 	WHERE a.album_id = ai.album_id and ai.song_id = s.song_id and a.album_id = %s;
 	'''
 	cursor.execute(query,[album_id])
 	transactions = [to_string(x) for x in cursor.fetchall()]
-	keys = ['title','album_name','album_id']
+	keys = ['title','album_name','album_id', 'song_id']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}
@@ -457,6 +457,7 @@ def album_info(request, **kwargs):
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
 		tempDict = {}
+	print(masterList)
 	return render(request, 'album_info.html',{'masterList':masterList})
 
 
