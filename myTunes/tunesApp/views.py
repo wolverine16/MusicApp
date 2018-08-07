@@ -25,7 +25,7 @@ def favorites(request):
 def favSongs(request,song_id=''):
 	"""Favorite songs for the user."""
 
-	if song_id != 0:
+	if song_id != '':
 		loggedInUser = request.user
 		try:
 			one_sg = Song.objects.get(pk=song_id)
@@ -75,7 +75,7 @@ def favArtists(request,artist_id=''):
 	"""Favorite songs for the user."""
 	
 
-	if artist_id != 0:
+	if artist_id != '':
 		loggedInUser = request.user
 		try:
 			one_artist = Artist.objects.get(artist_id=artist_id)
@@ -346,6 +346,7 @@ def search(request):
 				srch_to_save.save()
 
 
+
 			return render(request, 'results.html', {'masterList':masterList, 'searches': recent_searches})
 
 		return render(request, 'search.html')
@@ -453,3 +454,11 @@ def okayToSave(song=None,artist=None,album=None,genre=None):
 			return True
 
 	return False
+
+def createLinks(searches):
+	srch_list = []
+
+	for one_srch in searches:
+
+
+	return srch_list
