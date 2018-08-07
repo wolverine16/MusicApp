@@ -25,11 +25,22 @@ def favorites(request):
 def favSongs(request,song_id=''):
 	"""Favorite songs for the user."""
 
-	if song_id != '':
+	if song_id != 0:
 		loggedInUser = request.user
-		one_sg = Song.objects.get(pk=song_id)
-		sg_likes = Song_Likes(song_id=one_sg, user_id=loggedInUser, count=1, rating=0.0)
-		sg_likes.save()
+		try:
+			one_sg = Song.objects.get(pk=song_id)
+		except Song.DoesNotExist:
+			one_sg = None
+
+
+		try:
+			one_sg_likes = Song_Likes.objects.get(user_id=loggedInUser,song_id=one_sg)
+		except Song_Likes.DoesNotExist:
+			one_sg_likes = None
+
+		if one_sg_likes == None:
+			new_sg_likes = Song_Likes(song_id=one_sg,user_id=loggedInUser,count=1,rating=0.0)
+			new_sg_likes.save()
 
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy,
@@ -63,11 +74,23 @@ def favArtists(request,artist_id=''):
 	"""Favorite artists for the user."""
 	"""Favorite songs for the user."""
 	
-	if artist_id != '':
+
+	if artist_id != 0:
 		loggedInUser = request.user
-		one_artist = Artist.objects.get(pk=artist_id)
-		one_artist_likes = Artist_Likes(artist_id=one_artist,user_id=loggedInUser,rating=0.0)
-		one_artist_likes.save()
+		try:
+			one_artist = Artist.objects.get(artist_id=artist_id)
+		except Artist.DoesNotExist:
+			one_artist = None
+
+
+		try:
+			one_artist_likes = Artist_Likes.objects.get(user_id=loggedInUser,artist_id=one_artist)
+		except Artist_Likes.DoesNotExist:
+			one_artist_likes = None
+
+		if one_artist_likes == None:
+			new_artist_likes = Artist_Likes(artist_id=one_artist,user_id=loggedInUser,rating=0.0)
+			new_artist_likes.save()
 
 	query = '''
 	SELECT a.artist_id, a.artist_name, al.rating, al.id, 'False'
@@ -121,9 +144,18 @@ def favGenres(request,genre_id=0):
 
 	if genre_id != 0:
 		loggedInUser = request.user
-		one_genre = Genre.objects.get(pk=genre_id)
-		one_genre_likes = Genre_Likes.objects.get(user_id=loggedInUser,genre_id=one_genre)
-		if not one_genre_likes:
+		try:
+			one_genre = Genre.objects.get(genre_id=genre_id)
+		except Genre.DoesNotExist:
+			one_genre = None
+
+
+		try:
+			one_genre_likes = Genre_Likes.objects.get(user_id=loggedInUser,genre_id=one_genre)
+		except Genre_Likes.DoesNotExist:
+			one_genre_likes = None
+
+		if one_genre_likes == None:
 			new_genre_likes = Genre_Likes(genre_id=one_genre,user_id=loggedInUser,rating=0.0)
 			new_genre_likes.save()
 
