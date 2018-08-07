@@ -21,8 +21,11 @@ def home(request):
 def favorites(request):
 	"""Favorites landing page."""
 	return render(request, 'favorites_general.html')
-	
-def favSongs(request,song_id=''):
+
+
+# --- Favorite Songs Handling ---
+
+def favSongs(request, song_id=''):
 	"""Favorite songs for the user."""
 
 	if song_id != '':
@@ -45,8 +48,8 @@ def favSongs(request,song_id=''):
 	query = '''
 	SELECT s.song_id, s.title, s.song_key, s.duration, s.energy,
 	s.tempo, s.danceability, s.time_signature, s.year, s.writer,
-	s.loudness, sl.count, sl.rating, sl.id,sal.album_id,sart.artist_id,
-	sg.genre_id, al.album_name, art.artist_name, g.label
+	s.loudness, sl.count, sl.rating, sl.id, sal.album_id, sart.artist_id,
+	sg.genre_id, al.album_name, art.artist_name, g.label, 'False'
 	FROM tunesapp_song_likes sl 
 	LEFT OUTER JOIN auth_user u ON sl.user_id_id = u.id 
 	LEFT OUTER JOIN tunesapp_song s ON sl.song_id_id = s.song_id
@@ -58,19 +61,58 @@ def favSongs(request,song_id=''):
 	LEFT OUTER JOIN tunesapp_genre g ON sg.genre_id = g.genre_id
 	WHERE u.username =%s
 	ORDER BY sl.rating DESC
-
 	'''
-	keys = ['song_id','title','song_key','duration','energy',
+	keys = ['song_id','song_title','song_key','duration','energy',
 	'tempo','danceability','time_signature','year','writer',
-	'loudness','count','rating','id', 'album_id', 'artist_id',
-	'genre_id', 'album_name', 'artist_name', 'label']
+	'loudness','sl_count','song_rating','sl_id', 'album_id', 'artist_id',
+	'genre_id', 'album_name', 'artist_name', 'genre_label', 'sl_delete']
 
+	if request.method == 'POST':
+		initialDict = createDict(request, query, keys)
+		editFavSongs(request, initialDict) # We delete the entry and then return to reload the page
 	masterList = createDict(request, query, keys)
-	return render(request, 'favorite_songs.html',{'masterList':masterList})
+	SongFavFormset = formset_factory(forms.SongFavsForm)
+	formset = SongFavFormset(initial=masterList, prefix='song')
+	data = zip(masterList, formset)
+	return render(request, 'favorite_songs.html', {'data':data})
+	
+def editFavSongs(request, initialDict):
+	form_ct = len(initialDict)
+	post_dict = request.POST.dict()
+	
+	deleted_objs = []
+
+	for key in post_dict.keys():
+		if 'sl_delete' in key:
+			num_pos = key.find('song-') + len('song-')
+			id_num = key[num_pos]
+			sl_id = post_dict['song-' + id_num + '-sl_id']
+			try:
+				models.Song_Likes.objects.get(pk=sl_id).delete()
+			except Song_Likes.DoesNotExist:
+				pass
+			deleted_objs.append(sl_id)
+			
+	for key in post_dict.keys():
+		if 'song_rating' in key:
+			num_pos = key.find('song-') + len('song-')
+			id_num = key[num_pos]
+			new_rating = post_dict['song-' + id_num + '-song_rating']
+			sl_id = post_dict['song-' + id_num + '-sl_id']
+			if sl_id not in deleted_objs:
+				init_dict = initialDict[int(id_num)]
+				init_rating = init_dict['song_rating']
+				if int(new_rating) != int(init_rating):
+					inst = models.Song_Likes.objects.get(pk=sl_id)
+					inst.rating = new_rating
+					inst.save()
+	
+# --- End Favorite Songs ---
+
 	
 # --- Favorite Artists Handling ---
 
-def favArtists(request,artist_id=''):
+def favArtists(request, artist_id=''):
 	"""Favorite artists for the user."""
 	"""Favorite songs for the user."""
 	
@@ -113,36 +155,44 @@ def favArtists(request,artist_id=''):
 def editFavArtists(request, initialDict):
 	form_ct = len(initialDict)
 	post_dict = request.POST.dict()
+	
+	deleted_objs = []
 
 	for key in post_dict.keys():
 		if 'al_delete' in key:
-			num_pos = key.find('artist-') + 7
+			num_pos = key.find('artist-') + len('artist-')
 			id_num = key[num_pos]
 			al_id = post_dict['artist-' + id_num + '-al_id']
-			models.Artist_Likes.objects.get(pk=al_id).delete()
+			try:
+				models.Artist_Likes.objects.get(pk=al_id).delete()
+			except Artist_Likes.DoesNotExist:
+				pass
+			deleted_objs.append(al_id)
+			
 			
 	for key in post_dict.keys():
 		if 'artist_rating' in key:
-			num_pos = key.find('artist-') + 7
+			num_pos = key.find('artist-') + len('artist-')
 			id_num = key[num_pos]
 			new_rating = post_dict['artist-' + id_num + '-artist_rating']
 			al_id = post_dict['artist-' + id_num + '-al_id']
-			init_dict = initialDict[int(id_num)]
-			init_rating = init_dict['artist_rating']
-			if int(new_rating) != int(init_rating):
-				inst = models.Artist_Likes.objects.get(pk=al_id)
-				inst.rating = new_rating
-				inst.save()
+			if al_id not in deleted_objs:
+				init_dict = initialDict[int(id_num)]
+				init_rating = init_dict['artist_rating']
+				if int(new_rating) != int(init_rating):
+					inst = models.Artist_Likes.objects.get(pk=al_id)
+					inst.rating = new_rating
+					inst.save()
 	
 # --- End Favorite Artists ---
 	
 	
 # --- Favorite Genres Handling ---
 
-def favGenres(request,genre_id=0):
+def favGenres(request, genre_id=''):
 	"""Favorite songs for the user."""
 
-	if genre_id != 0:
+	if genre_id != '':
 		loggedInUser = request.user
 		try:
 			one_genre = Genre.objects.get(genre_id=genre_id)
@@ -190,27 +240,34 @@ def editFavGenres(request, initialDict):
 	#print(post_dict)
 	#formset = GenreFavFormset(request.POST)
 
+	deleted_objs = []
+
 	#delete_list = request.POST.getlist('gl_delete')
 	for key in post_dict.keys():
 		if 'gl_delete' in key:
-			num_pos = key.find('genre-') + 6
+			num_pos = key.find('genre-') + len('genre-')
 			id_num = key[num_pos]
 			gl_id = post_dict['genre-' + id_num + '-gl_id']
-			models.Genre_Likes.objects.get(pk=gl_id).delete()
+			try:
+				models.Genre_Likes.objects.get(pk=gl_id).delete()
+			except Genre_Likes.DoesNotExist:
+				pass
+			deleted_objs.append(gl_id)
 			
 	for key in post_dict.keys():
 		if 'genre_rating' in key:
-			num_pos = key.find('genre-') + 6
+			num_pos = key.find('genre-') + len('genre-')
 			id_num = key[num_pos]
 			new_rating = post_dict['genre-' + id_num + '-genre_rating']
 			gl_id = post_dict['genre-' + id_num + '-gl_id']
-			init_dict = initialDict[int(id_num)]
-			init_rating = init_dict['genre_rating']
-			if int(new_rating) != int(init_rating):
-				#print(str(gl_id) + ": " + str(new_rating))
-				inst = models.Genre_Likes.objects.get(pk=gl_id)
-				inst.rating = new_rating
-				inst.save()
+			if gl_id not in deleted_objs:
+				init_dict = initialDict[int(id_num)]
+				init_rating = init_dict['genre_rating']
+				if int(new_rating) != int(init_rating):
+					#print(str(gl_id) + ": " + str(new_rating))
+					inst = models.Genre_Likes.objects.get(pk=gl_id)
+					inst.rating = new_rating
+					inst.save()
 			
 			
 	# This doesn't work :'(
@@ -290,7 +347,7 @@ def search(request):
 				if nonNullIndices[num] == 0:
 					conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \nAND '.format("\'" + song + "\'")
 				elif nonNullIndices[num] == 1:
-					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + genre + "\'")
+					conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\')) \n AND '.format("\'" + genre + "\'")
 				elif nonNullIndices[num] == 2:
 					conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\')) \n AND '.format("\'" + artist + "\'")
 				elif nonNullIndices[num] == 3:
@@ -302,7 +359,7 @@ def search(request):
 			if lastIndex == 0:
 				conditions += 's.title LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + song + "\'")
 			elif lastIndex == 1:
-				conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + genre + "\'")
+				conditions += 'g.label LIKE IF({0} is NULL, \'%\', CONCAT(\'%\',{0},\'%\'))'.format("\'" + genre + "\'")
 			elif lastIndex == 2:
 				conditions += 'art.artist_name LIKE IF({0} is NULL, \'%\', CONCAT({0},\'%\'))'.format("\'" + artist + "\'")
 			elif lastIndex == 3:
@@ -385,13 +442,13 @@ def album_info(request, **kwargs):
 	print(kwargs)
 	album_id = kwargs['album_id']; 
 	query = '''
-	SELECT s.title,a.album_name,ai.album_id
+	SELECT s.title, a.album_name, ai.album_id, s.song_id
 	FROM tunesapp_album a, tunesapp_song_song_albums ai, tunesapp_song s
 	WHERE a.album_id = ai.album_id and ai.song_id = s.song_id and a.album_id = %s;
 	'''
 	cursor.execute(query,[album_id])
 	transactions = [to_string(x) for x in cursor.fetchall()]
-	keys = ['title','album_name','album_id']
+	keys = ['title','album_name','album_id', 'song_id']
 	# corresponding numeric value for each key to be used to populate dictionary
 	countLst = range(len(keys))
 	tempDict = {}
@@ -401,6 +458,7 @@ def album_info(request, **kwargs):
 			tempDict[keys[i]] = tup[i]
 		masterList.append(tempDict)
 		tempDict = {}
+	print(masterList)
 	return render(request, 'album_info.html',{'masterList':masterList})
 
 
@@ -427,10 +485,17 @@ def make_masterList(transactions, keys):
 	masterList = []
 	for tup in transactions:
 		for i in countLst:
-			if keys[i] == "gl_delete":
+			if keys[i] in ['gl_delete', 'al_delete', 'sl_delete']:
 				tempDict[keys[i]] = False
+			elif keys[i] in ['duration', 'energy', 'tempo', 'loudness', 'danceability']:
+				tempDict[keys[i]] = decimal.Decimal(tup[i]).quantize(decimal.Decimal('0.1'))
+			elif tup[i] is None:
+				tempDict[keys[i]] = '-'
 			else:
 				tempDict[keys[i]] = tup[i]
+			if keys[i] == 'year' and (int(tempDict[keys[i]]) == 0):
+				tempDict[keys[i]] = '-'
+				
 		masterList.append(tempDict)
 		tempDict = {}
 	return masterList

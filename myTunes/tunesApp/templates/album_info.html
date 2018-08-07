@@ -1,14 +1,25 @@
 {% extends "base.html" %}
+
+{% load static %}
+
+{% block custom_style %}
+	<!-- Custom styles for this template -->
+	<link href="{% static 'tunesApp/album_info.css' %}" rel="stylesheet">
+{% endblock custom_style %}
+
+{% block title %}Album Info{% endblock title %}
+
 {% block content %}
-<p>Songs in album: 
+
+<h1>Songs in Album: 
 {% for trans in masterList|slice:":1" %}
-'{{trans.album_name}}'
+'{{ trans.album_name }}'
 {% endfor %}
-<p/>
+</h1>
 	{% for trans in masterList %}
-		<p>	
-			{{trans.title}}
+		<h2>	
+			{{ forloop.counter }}. <a href="/favorites/songs/{{ trans.song_id }}/">{{ trans.title }}</a>
 			<br />	
-		</p>
+		</h2>
 	{% endfor %}
 {% endblock %}
