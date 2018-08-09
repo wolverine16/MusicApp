@@ -35,13 +35,13 @@
 
 	<div class="col-sm-8">
 	  <h5>{{ trans.song_title }}
-	  {% if trans.artist_name != '-' %} by {{ trans.artist_name }}
+	  {% if trans.artist_name != '-' %} by <a href="/favorites/artists/{{ trans.artist_id }}">{{ trans.artist_name }}</a>
 	  {% else %} -- Artist Unknown
 	  {% endif %}</h5>
 	  
 	  <h6>{% if trans.album_name != '-' %}<a href="/album_info/{{ trans.album_id }}">{{ trans.album_name }}</a>
 	  {% else %}Unknown Album{% endif %}
-	  &emsp; {% if trans.genre_label != '-' %}{{ trans.genre_label }}
+	  &emsp; {% if trans.genre_label != '-' %}<a href="/favorites/genres/{{ trans.genre_id }}">{{ trans.genre_label }}</a>
 	  {% else %}Unknown Genre{% endif %}
 	  {% if trans.year != '-' %}&emsp; {{ trans.year }}
 	  {% endif %}
